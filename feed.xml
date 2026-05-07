@@ -2,16 +2,16 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>玄外之音</title>
-    <link>https://tsaihyun.github.io/</link>
+    <link>https://hyun.cc/</link>
     <description>代码是理性的构建，文字是感性的流露。在这里，我不仅记录复杂的网络架构与代码实现，也记录生活中的碎碎念。万物皆有回响，此为玄外之音。</description>
     <language>zh-cn</language>
     <generator>Gridea Pro</generator>
     <lastBuildDate>Fri, 08 May 2026 04:06:54 +0800</lastBuildDate>
-    <atom:link href="https://tsaihyun.github.io/feed.xml" rel="self" type="application/rss+xml"></atom:link>
+    <atom:link href="https://hyun.cc/feed.xml" rel="self" type="application/rss+xml"></atom:link>
     <item>
       <title>狐蒂云（szhdy.com）崩盘始末完整深度复盘</title>
-      <link>https://tsaihyun.github.io/post/quick-start/</link>
-      <guid isPermaLink="true">https://tsaihyun.github.io/post/quick-start/</guid>
+      <link>https://hyun.cc/post/quick-start/</link>
+      <guid isPermaLink="true">https://hyun.cc/post/quick-start/</guid>
       <pubDate>Thu, 07 May 2026 08:47:58 +0800</pubDate>
       <description><![CDATA[<p><strong>前言</strong><br />
 2026年5月7日凌晨，IDC圈知名服务商“狐蒂云”正式宣告崩盘。CEO“小胖狐”在短短24小时内，从高调促销急转直下，宣布破产。上千名站长、开发者及企业的服务器数据与充值资金，瞬间坠入黑洞。</p>
@@ -172,8 +172,8 @@
     </item>
     <item>
       <title>永久白嫖Cloudfire Pro 或 Business</title>
-      <link>https://tsaihyun.github.io/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/</link>
-      <guid isPermaLink="true">https://tsaihyun.github.io/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/</guid>
+      <link>https://hyun.cc/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/</link>
+      <guid isPermaLink="true">https://hyun.cc/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/</guid>
       <pubDate>Mon, 05 Jan 2026 03:58:34 +0800</pubDate>
       <description><![CDATA[<h1 id="cloudflare-">Cloudflare 计费逻辑缺陷：通过请求重放实现高级订阅绕过</h1>
 <p>在针对 Cloudflare 订阅体系进行逆向测试时，我发现其前端结算逻辑与后端状态同步之间存在一个有趣的“空隙”。通过特定的<strong>请求重放（Replay Attack）</strong>，可以在系统未产生实际账单的情况下，诱导后端激活 Pro 或 Business 计划。</p>
