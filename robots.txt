@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://hyun.cc/sitemap.xml
+Sitemap: https://blog.hyun.cc/sitemap.xml

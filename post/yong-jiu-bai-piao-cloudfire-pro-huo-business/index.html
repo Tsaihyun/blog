@@ -251,17 +251,17 @@
     
 <meta name="description" content="Cloudflare 计费逻辑缺陷：通过请求重放实现高级订阅绕过 在针对 Cloudflare 订阅体系进行逆向测试时，我发现其前端结算逻辑与后端状态同步之间存在一个有趣的“空隙”。通过特定的请求重放（Replay Attack），可以在系统未产生实际账单的情况下，诱导后端激活 Pro 或 Business 计划。 ![截图](https://tc.7zz.cn/i/2026/02&amp;hellip;">
 <meta name="keywords" content="玄外之音,Hyun,Hyun's Sound,Web Development,IDC,Server,Cloudflare,Minimalism,Digital Garden,SiYuan Note,网络安全,逆向工程,技术随笔">
-<link rel="canonical" href="https://hyun.cc/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"永久白嫖Cloudfire Pro 或 Business","url":"https://hyun.cc/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/","description":"Cloudflare 计费逻辑缺陷：通过请求重放实现高级订阅绕过 在针对 Cloudflare 订阅体系进行逆向测试时，我发现其前端结算逻辑与后端状态同步之间存在一个有趣的“空隙”。通过特定的请求重放（Replay Attack），可以在系统未产生实际账单的情况下，诱导后端激活 Pro 或 Business 计划。 ![截图](https://tc.7zz.cn/i/2026/02\u0026hellip;","datePublished":"2026-01-05T03:58:34+08:00","dateModified":"2026-05-08T04:04:31+08:00","author":{"@type":"Person","name":"玄外之音"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/images/avatar.png"},"name":"玄外之音"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://hyun.cc","name":"玄外之音","position":1},{"@type":"ListItem","item":"https://hyun.cc/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/","name":"永久白嫖Cloudfire Pro 或 Business","position":2}]}</script>
+<link rel="canonical" href="https://blog.hyun.cc/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"永久白嫖Cloudfire Pro 或 Business","url":"https://blog.hyun.cc/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/","description":"Cloudflare 计费逻辑缺陷：通过请求重放实现高级订阅绕过 在针对 Cloudflare 订阅体系进行逆向测试时，我发现其前端结算逻辑与后端状态同步之间存在一个有趣的“空隙”。通过特定的请求重放（Replay Attack），可以在系统未产生实际账单的情况下，诱导后端激活 Pro 或 Business 计划。 ![截图](https://tc.7zz.cn/i/2026/02\u0026hellip;","datePublished":"2026-01-05T03:58:34+08:00","dateModified":"2026-05-08T04:04:31+08:00","author":{"@type":"Person","name":"玄外之音"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/images/avatar.png"},"name":"玄外之音"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://blog.hyun.cc","name":"玄外之音","position":1},{"@type":"ListItem","item":"https://blog.hyun.cc/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/","name":"永久白嫖Cloudfire Pro 或 Business","position":2}]}</script>
 <meta property="og:title" content="永久白嫖Cloudfire Pro 或 Business">
 <meta property="og:description" content="Cloudflare 计费逻辑缺陷：通过请求重放实现高级订阅绕过 在针对 Cloudflare 订阅体系进行逆向测试时，我发现其前端结算逻辑与后端状态同步之间存在一个有趣的“空隙”。通过特定的请求重放（Replay Attack），可以在系统未产生实际账单的情况下，诱导后端激活 Pro 或 Business 计划。 ![截图](https://tc.7zz.cn/i/2026/02&amp;hellip;">
-<meta property="og:url" content="https://hyun.cc/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/">
+<meta property="og:url" content="https://blog.hyun.cc/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="玄外之音">
 <meta property="og:image" content="/images/avatar.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:url" content="https://hyun.cc/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/">
+<meta name="twitter:url" content="https://blog.hyun.cc/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/">
 <meta name="twitter:title" content="永久白嫖Cloudfire Pro 或 Business">
 <meta name="twitter:description" content="Cloudflare 计费逻辑缺陷：通过请求重放实现高级订阅绕过 在针对 Cloudflare 订阅体系进行逆向测试时，我发现其前端结算逻辑与后端状态同步之间存在一个有趣的“空隙”。通过特定的请求重放（Replay Attack），可以在系统未产生实际账单的情况下，诱导后端激活 Pro 或 Business 计划。 ![截图](https://tc.7zz.cn/i/2026/02&amp;hellip;">
 <meta name="twitter:image" content="/images/avatar.png">
@@ -520,7 +520,7 @@ const delay = ms =&gt; new Promise(res =&gt; setTimeout(res, ms));
                     
     </nav>
 
-    <div class="Copyright">Copyright &copy; 2026 <a href="https://hyun.cc">
+    <div class="Copyright">Copyright &copy; 2026 <a href="https://blog.hyun.cc">
                 玄外之音
             </a></div>
 
