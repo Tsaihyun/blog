@@ -6,7 +6,7 @@
     <description></description>
     <language>zh-cn</language>
     <generator>Gridea Pro</generator>
-    <lastBuildDate>Sat, 16 May 2026 09:30:01 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 16 May 2026 09:32:18 +0800</lastBuildDate>
     <atom:link href="https://blog.hyun.cc/feed.xml" rel="self" type="application/rss+xml"></atom:link>
     <item>
       <title>一文看懂常见防火墙阻断技术与 DNS 污染</title>
@@ -199,6 +199,10 @@
 <h2 id="heading">写在最后</h2>
 <p>网络技术是一个动态对抗的过程。了解了“阻断”的本质，你就会发现网络排查其实是一门非常严谨的因果科学。下次再遇到连接失败，先掏出这篇排查手册，看看到底是卡在了哪一关，而不是一上来就盲目质问“为什么别人的能用我的不行”。</p>
 ]]></description>
+      <category>防火墙</category>
+      <category>防火长城</category>
+      <category>GFW</category>
+      <category>中国国家防火墙</category>
     </item>
     <item>
       <title>狐蒂云（szhdy.com）崩盘始末完整深度复盘</title>
