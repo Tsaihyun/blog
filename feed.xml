@@ -6,8 +6,74 @@
     <description></description>
     <language>zh-cn</language>
     <generator>Gridea Pro</generator>
-    <lastBuildDate>Sat, 16 May 2026 09:35:23 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 18 May 2026 12:32:29 +0800</lastBuildDate>
     <atom:link href="https://blog.hyun.cc/feed.xml" rel="self" type="application/rss+xml"></atom:link>
+    <item>
+      <title>哪吒监控终端 404 故障复盘</title>
+      <link>https://blog.hyun.cc/post/5BSKOr/</link>
+      <guid isPermaLink="true">https://blog.hyun.cc/post/5BSKOr/</guid>
+      <pubDate>Mon, 18 May 2026 12:32:29 +0800</pubDate>
+      <description><![CDATA[<p>今天把哪吒监控升级了一下，升级后常规图表与 Agent gRPC 状态上报均正常，唯独在后台点击 “终端管理”（路径 /dashboard/terminal/:id）时，命令行窗口死活弹不出来。直接报错404.</p>
+<p><img src="https://tc.7zz.cn/i/2026/03/27/726e59bebb5bcf922bdc27c833c5a541.png" alt="截图" /></p>
+<p>去翻 Nginx 的实时访问日志，抓到了这么一条记录：</p>
+<pre><code class="language-text">&quot;GET /dashboard/terminal/5 HTTP/2.0&quot; 404 468 &quot;https://nz.7zz.cn/dashboard&quot;
+
+</code></pre>
+<p>这就说明请求通过 HTTP/2.0 进来了，但后端直接回了个 <code>404</code>。</p>
+<p>我前后排查了几轮，从 Nginx 一路排查到被控端，最后发现被一个极度隐蔽的边缘节点拦截问题给坑了。记录一下死磕的过程。</p>
+<hr />
+<h2 id="-nginx--emerg">一、 Nginx 缓冲区的配置审查坑 (<code>[emerg]</code>)</h2>
+<p>哪吒 v1 的在线终端强依赖标准的 WebSocket 长连接升级。一开始为了优化大流量下的性能，我顺手在 <code>location /</code> 里面塞了自定义的缓冲区参数：</p>
+<pre><code class="language-nginx">proxy_buffer_size 128k;
+proxy_buffers 4 256k;
+
+</code></pre>
+<p>结果在宝塔面板一保存，Nginx 语法测试直接炸了：</p>
+<blockquote>
+<p><code>[emerg] &quot;proxy_temp_file_write_size&quot; must be equal to or greater than the maximum of the value...</code></p>
+</blockquote>
+<p><strong>原因</strong>：宝塔在全局 <code>nginx.conf</code> 里默认给的 <code>proxy_temp_file_write_size</code> 太小了。Nginx 规范规定，<strong>临时文件写入大小必须大于或等于缓冲区的最大值</strong>。</p>
+<p><strong>解决办法</strong>：我把这堆自定义缓冲区配置直接提到 <code>server</code> 块的顶部，并且显式定义 <code>proxy_temp_file_write_size 256k;</code>，让它变成全站统一规格，顺利通过 Nginx 测试。</p>
+<hr />
+<h2 id="-">二、 协议对齐与高优先级正则拦截</h2>
+<p>哪吒新版面板对 API 路由做了重构。普通的 Web 流量走常规转发，但终端走的是专门的 WebSocket 正则路由。我在 Nginx 中引入了高优先级的正则匹配块（<code>~*</code> 优先级高于 <code>/</code>），并补全了跨域鉴权头（<code>Origin</code>）和连接升级头：</p>
+<pre><code class="language-nginx"># 哪吒官方标准：WebSocket 相关拦截
+location ~* ^/api/v1/ws/(server|terminal|file)(.*)$ {
+    proxy_set_header Host $host;
+    proxy_set_header nz-realip $http_cf_connecting_ip; 
+    proxy_set_header Origin https://$host; # 跨域鉴权关键头
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection &quot;upgrade&quot;;
+    proxy_read_timeout 3600s;
+    proxy_send_timeout 3600s;
+    proxy_pass http://127.0.0.1:8008;
+}
+
+</code></pre>
+<p>到这一步，Nginx 层的转发逻辑已经彻底通了。然而刷新浏览器去点终端，依然是 <code>404</code>。我当时甚至怀疑是某些老旧被控端的魔改协议或者 Docker 镜像没更新干净，结果一顿重装、强拉官方最新镜像下来，依旧没有任何卵用。</p>
+<hr />
+<h2 id="-cloudflare--404-">三、 真相：Cloudflare 自定义 404 页面的“降维打击”</h2>
+<p>最后我把视线移向最外层的 Cloudflare，才发现问题根本不在服务器内部，而是 <strong>我之前在 CF 后台配置的“自定义错误页面（Custom Pages）”拦截了路由</strong>。</p>
+<h3 id="heading">底层逻辑分析：</h3>
+<ol>
+<li><strong>SPA 虚拟路由</strong>：新版哪吒的前端是基于现代框架构建的单页面应用（SPA）。点终端时浏览器请求的 <code>/dashboard/terminal/5</code>，在服务器上压根没有真实的物理文件，它只是个前端虚拟路径。</li>
+<li><strong>后端的 Fallback 机制</strong>：当我直接请求这个虚拟路径时，哪吒后端的 Go 框架因为找不到物理文件，确实会向外抛出一个 <strong><code>404</code> 状态码</strong>。但在正常情况下，它会<strong>同时附带返回前端的 JS 引导文件</strong>，让浏览器拿到后在本地动态解析并渲染出终端窗口。</li>
+<li><strong>CF 的热心拦截</strong>：坏就坏在我之前在 Cloudflare 后台开启了 <strong>“404 自定义错误页面 (Custom 404 Page)”</strong>。CF 的边缘节点一旦嗅探到后端吐出的 <code>404</code> 状态码，就会自作聪明地判定“这是一个死链”，然后<strong>强行把后端原本附带的、用来初始化前端路由的 JS 数据全部抹掉，替换成了我自定义的 HTML 404 页面</strong>。</li>
+</ol>
+<p>结果就是前端动态脚本直接断流，浏览器根本拿不到渲染终端的核心代码。我在 Nginx 日志里看到的 <code>404 468</code>，其实就是请求被 CF 强行拦截干涉后的假象。</p>
+<hr />
+<h2 id="--1">四、 最终解决</h2>
+<p>解决方式非常粗暴：</p>
+<ol>
+<li>登录 <strong>Cloudflare 控制台</strong>。</li>
+<li>进入对应域名 -&gt; <strong>自定义页面 (Custom Pages)</strong>。</li>
+<li>找到 <strong>404 错误页 (404 Error Page)</strong>，<strong>直接把它删掉，恢复成默认状态（不拦截）</strong>。</li>
+</ol>
+<p>再去点在线终端，熟悉的黑色命令行瞬间秒连，丝滑无比。</p>
+]]></description>
+      <category>cloudflare</category>
+      <category>哪吒探针</category>
+    </item>
     <item>
       <title>一文看懂常见防火墙阻断技术与 DNS 污染</title>
       <link>https://blog.hyun.cc/post/nAY9Im/</link>
@@ -614,28 +680,6 @@ const delay = ms =&gt; new Promise(res =&gt; setTimeout(res, ms));
       <category>特权</category>
       <category>优待证</category>
       <category>退伍军人优待证</category>
-    </item>
-    <item>
-      <title>说说最近的 热搜 “兵役登记”</title>
-      <link>https://blog.hyun.cc/post/rIvZoU/</link>
-      <guid isPermaLink="true">https://blog.hyun.cc/post/rIvZoU/</guid>
-      <pubDate>Tue, 10 Dec 2024 07:26:51 +0800</pubDate>
-      <description><![CDATA[<p>今天看到兵役登记下的评论区，心里真不是滋味。</p>
-<p>满屏的阴阳怪气：有人说“让去送死”，有人喊着“明天就去纹身”，甚至还有人刷“抓壮丁”。看着这些恶意调侃，我只感到一阵无语和心寒。</p>
-<p><strong>现在的年轻人，是不是对“兵役登记”有什么误解？</strong></p>
-<p>登记只是程序，参军完全自愿。你想去，体检、面试、政审，关关都是硬指标。有些人可能不知道，在我那个年代，当兵是无数人的梦想，却不是谁都有那个命。</p>
-<p>想起我那个发小，辍学早，17岁开始连续报了三年。第一次因为痔疮被刷，第二次肝指标不合格，第三次因为年龄和学历卡死。报名参军是他这辈子的执念，被刷下来成了他一生的遗憾。</p>
-<p>一个县城上千人报名，最后能穿上军装的不过百来号人。<strong>那是百里挑一的荣誉，怎么到了某些人嘴里，就成了避之不及的“苦差事”？</strong></p>
-<hr />
-<p>再聊聊那些拿战争开玩笑的。</p>
-<p>真要到了战火烧到家门口的那一天，谁也别想置身事外。别幻想什么磕头求饶，也别指望当个汉奸就能保命。子弹和导弹是不长眼的，平民和军人在战争面前是一体的。更何况，想当汉奸？那也得是有资产、有筹码的地主才有的选。普通人除了挺起脊梁，别无他路。</p>
-<p><strong>孙中山先生说过：“一个人不爱国甚至背叛祖国，那都是很丢脸的。”</strong></p>
-<p>我平时也喷，也常骂那些社会阴暗面。看到不公的事情，我会去质疑、会去发声。但我所有的“喷”和“骂”，归根结底是希望这个国家能变得更好。</p>
-<p><strong>我可以批评我自家的屋子漏雨，但我绝不能容忍有人想把整栋房子拆了，更不能接受有人在这个守护我们的盾牌上吐口水。</strong></p>
-<p>那些把偏见当幽默、把无知当个性的声音，终究会消失在历史的尘埃里。而那种刻在骨子里的、对家国的赤诚，才是我们这个民族能撑到今天的底气。</p>
-<hr />
-]]></description>
-      <category>兵役登记</category>
     </item>
   </channel>
 </rss>
