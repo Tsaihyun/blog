@@ -6,7 +6,7 @@
     <description></description>
     <language>zh-cn</language>
     <generator>Gridea Pro</generator>
-    <lastBuildDate>Fri, 19 Jun 2026 22:19:44 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 19 Jun 2026 23:08:44 +0800</lastBuildDate>
     <atom:link href="https://tsaihyun.github.io/feed.xml" rel="self" type="application/rss+xml"></atom:link>
     <item>
       <title>避坑野草云：200M 回国优质带宽， 实际回国不到 3M</title>
@@ -14,10 +14,9 @@
       <guid isPermaLink="true">https://tsaihyun.github.io/post/DyfhhM/</guid>
       <pubDate>Fri, 19 Jun 2026 22:19:44 +0800</pubDate>
       <description><![CDATA[<p>用了一个月，还是决定写篇避坑记录。</p>
-<p>先说结论：第一个月用着确实“嘎嘎快”，虽然基本每天都要炸一次路由，但不影响日常使用，我也就没太在意。</p>
+<p>先说结论：第一个月用着确实“嘎嘎快”，能跑满服务器带宽，虽然基本每天都要炸一次路由，但不影响日常使用，我也就没太在意。</p>
 <p>我买的是香港轻量VPS，商品页面上醒目地写着——<strong>200M优质带宽、月600GB双向流量、国内优化网络</strong>。</p>
 <p>说实话，如果只是普通国际线路，回国速度有波动，我完全能理解。</p>
-<p>可这一个月用下来，线路稳定性真的谈不上好。路由异常、延迟波动，隔三差五就来一回。</p>
 <p>今天上午连上网，页面半天转不出来，我当时没多想，就切走用别的了。<br />
 <img src="https://tc.7zz.cn/i/2026/03/29/2f9e3c13b9a9348518007acfb886aef6.png" alt="image" /><br />
 下午再试，依然加载缓慢，我才觉得有点不对劲，干脆跑了个测速脚本。</p>
