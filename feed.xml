@@ -2,16 +2,76 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>玄外之音</title>
-    <link>https://blog.hyun.cc/</link>
+    <link>https://tsaihyun.github.io/</link>
     <description></description>
     <language>zh-cn</language>
     <generator>Gridea Pro</generator>
-    <lastBuildDate>Wed, 17 Jun 2026 18:41:17 +0800</lastBuildDate>
-    <atom:link href="https://blog.hyun.cc/feed.xml" rel="self" type="application/rss+xml"></atom:link>
+    <lastBuildDate>Fri, 19 Jun 2026 22:19:44 +0800</lastBuildDate>
+    <atom:link href="https://tsaihyun.github.io/feed.xml" rel="self" type="application/rss+xml"></atom:link>
+    <item>
+      <title>避坑野草云：200M 回国优质带宽， 实际回国不到 3M</title>
+      <link>https://tsaihyun.github.io/post/DyfhhM/</link>
+      <guid isPermaLink="true">https://tsaihyun.github.io/post/DyfhhM/</guid>
+      <pubDate>Fri, 19 Jun 2026 22:19:44 +0800</pubDate>
+      <description><![CDATA[<p>用了一个月，还是决定写篇避坑记录。</p>
+<p>先说结论：第一个月用着确实“嘎嘎快”，虽然基本每天都要炸一次路由，但不影响日常使用，我也就没太在意。</p>
+<p>我买的是香港轻量VPS，商品页面上醒目地写着——<strong>200M优质带宽、月600GB双向流量、国内优化网络</strong>。</p>
+<p>说实话，如果只是普通国际线路，回国速度有波动，我完全能理解。</p>
+<p>可这一个月用下来，线路稳定性真的谈不上好。路由异常、延迟波动，隔三差五就来一回。</p>
+<p>今天上午连上网，页面半天转不出来，我当时没多想，就切走用别的了。<br />
+<img src="https://tc.7zz.cn/i/2026/03/29/2f9e3c13b9a9348518007acfb886aef6.png" alt="image" /><br />
+下午再试，依然加载缓慢，我才觉得有点不对劲，干脆跑了个测速脚本。</p>
+<blockquote>
+<p>报告时间：2026-06-19 17:10:40 CST<br />
+脚本版本：v2026-01-25</p>
+</blockquote>
+<p><img src="https://tc.7zz.cn/i/2026/03/30/18KVOQ279.svg" alt="image" /></p>
+<blockquote>
+<p>报告时间：2026-06-19 20:30:21 CST<br />
+脚本版本：v2026-01-25</p>
+</blockquote>
+<p><img src="https://tc.7zz.cn/i/2026/03/30/17NX08R1C.svg" alt="image" /></p>
+<p>两次测速 都是 ：<strong>国内限速2Mbps，海外正常</strong>。</p>
+<p>这就很有意思了——标榜“国内优化网络”，结果回国线路反而被压得死死的。</p>
+<p>我把测速结果发给客服，对方给出的解释是：</p>
+<blockquote>
+<p>晚高峰影响。</p>
+</blockquote>
+<p><img src="https://tc.7zz.cn/i/2026/03/29/899516d78a400a26907c012266fbf9ae.png" alt="image" /></p>
+<p>问题是——</p>
+<p>下午五点，就已经算“晚高峰”了吗？<br />
+而且，我买的是 <strong>200M回国优质网络</strong>，不是“理论峰值200M、实际只能跑3M”的抽奖式带宽。</p>
+<p>测速数据摆在那儿，线路表现与宣传明显不符。但客服并没有对线路质量本身做任何解释，反而让我去测他们自建的测速站点，甚至还怀疑是我本地网络环境有问题。</p>
+<p>最让我无语的，是客服的这段原话：</p>
+<blockquote>
+<p>国内本身限制就很大，比如10M正常到国内都只能在1M左右，3M在晚高峰时候也算较为正常情况。</p>
+</blockquote>
+<p>按这个逻辑推一下——</p>
+<p>10M跑1M是正常；<br />
+200M跑3M也算是正常？</p>
+<p>那这“200M回国优质带宽”，到底优在哪里？质在哪里？</p>
+<p>如果评判标准变成了“能连上就算正常”，那那些漂亮参数、优化线路、回国加速的宣传语，又是在描述什么？</p>
+<p>线路拥堵，我理解；<br />
+网络波动，我也能接受。<br />
+但把长期异常说成常态，把宣传参数和实际体验彻底割裂，最后再把问题甩锅给用户网络——这种处理方式，确实让人难以认同。</p>
+<p>这次经历也算是再次验证了一句话：<strong>远离国人商家</strong>。</p>
+<p>最后客服给我的答复也很干脆：</p>
+<blockquote>
+<p>我们所有国内都是这样限速的。</p>
+</blockquote>
+<p>行吧。</p>
+<p><strong>用200M回国优质带宽，实际回国你就该是3M——</strong></p>
+<p>原来这才是他们家“优质”的真实含义。</p>
+<p>那你为什么不写明国际带宽200M 国内优化 20 Mbps （ 2 MB/s × 8 = 16 Mbps）</p>
+<p><img src="https://tc.7zz.cn/i/2026/03/29/9b45166a3e200b1497b67895c5e53243.png" alt="image" /></p>
+]]></description>
+      <category>野草云</category>
+      <category>测评</category>
+    </item>
     <item>
       <title>哪吒监控Dashboard路径漏洞实战测试</title>
-      <link>https://blog.hyun.cc/post/49ZHl5/</link>
-      <guid isPermaLink="true">https://blog.hyun.cc/post/49ZHl5/</guid>
+      <link>https://tsaihyun.github.io/post/49ZHl5/</link>
+      <guid isPermaLink="true">https://tsaihyun.github.io/post/49ZHl5/</guid>
       <pubDate>Wed, 17 Jun 2026 17:44:58 +0800</pubDate>
       <description><![CDATA[<h2 id="-">📌 写在前面</h2>
 <p>哪吒监控官方发布了一则重磅安全公告（GHSA-5c25-7vpj-9mqh），披露了一个<strong>无需任何认证即可读取任意文件</strong>的高危路径遍历漏洞。作为运维监控领域的常用工具，其影响面不容小觑。</p>
@@ -637,8 +697,8 @@ jwt_secret_key: rxLGg4gNLJEhRKA0oBOKBoGCaoqkdNW2R8OhLXu2XOZqKsWZy0iF5u4WXBl9zfee
     </item>
     <item>
       <title>哪吒监控终端 404 故障复盘</title>
-      <link>https://blog.hyun.cc/post/5BSKOr/</link>
-      <guid isPermaLink="true">https://blog.hyun.cc/post/5BSKOr/</guid>
+      <link>https://tsaihyun.github.io/post/5BSKOr/</link>
+      <guid isPermaLink="true">https://tsaihyun.github.io/post/5BSKOr/</guid>
       <pubDate>Mon, 18 May 2026 12:32:29 +0800</pubDate>
       <description><![CDATA[<p>今天把哪吒监控升级了一下，升级后常规图表与 Agent gRPC 状态上报均正常，唯独在后台点击 “终端管理”（路径 /dashboard/terminal/:id）时，命令行窗口死活弹不出来。直接报错404.</p>
 <p><img src="https://tc.7zz.cn/i/2026/03/27/726e59bebb5bcf922bdc27c833c5a541.png" alt="截图" /></p>
@@ -703,8 +763,8 @@ location ~* ^/api/v1/ws/(server|terminal|file)(.*)$ {
     </item>
     <item>
       <title>一文看懂常见防火墙阻断技术与 DNS 污染</title>
-      <link>https://blog.hyun.cc/post/nAY9Im/</link>
-      <guid isPermaLink="true">https://blog.hyun.cc/post/nAY9Im/</guid>
+      <link>https://tsaihyun.github.io/post/nAY9Im/</link>
+      <guid isPermaLink="true">https://tsaihyun.github.io/post/nAY9Im/</guid>
       <pubDate>Sat, 16 May 2026 07:45:19 +0800</pubDate>
       <description><![CDATA[<p>很多同学一旦遇到网络故障，由于不了解边界防火墙（如企业内网防火墙、骨干网长城GFW）的底层机制，往往会陷入盲目的猜疑中，不是疯狂重装系统，就是无休止地质问服务商。</p>
 <p>其实，所谓的“墙”并不是一个简单的“开关”，它是一整套精密的、分层级的拦截技术。网络数据传输就像寄快递，要经过打包（应用层）、写地址（网络层）、运输（传输层）等多个步骤。防火墙的拦截，也是在这几个层级上分别展开的。</p>
@@ -899,8 +959,8 @@ location ~* ^/api/v1/ws/(server|terminal|file)(.*)$ {
     </item>
     <item>
       <title>狐蒂云（szhdy.com）崩盘始末完整深度复盘</title>
-      <link>https://blog.hyun.cc/post/quick-start/</link>
-      <guid isPermaLink="true">https://blog.hyun.cc/post/quick-start/</guid>
+      <link>https://tsaihyun.github.io/post/quick-start/</link>
+      <guid isPermaLink="true">https://tsaihyun.github.io/post/quick-start/</guid>
       <pubDate>Thu, 07 May 2026 08:47:58 +0800</pubDate>
       <description><![CDATA[<p><strong>前言</strong><br />
 2026年5月7日凌晨，IDC圈知名服务商“狐蒂云”正式宣告崩盘。CEO“小胖狐”在短短24小时内，从高调促销急转直下，宣布破产。上千名站长、开发者及企业的服务器数据与充值资金，瞬间坠入黑洞。</p>
@@ -1061,8 +1121,8 @@ location ~* ^/api/v1/ws/(server|terminal|file)(.*)$ {
     </item>
     <item>
       <title> 规则的废墟：谁在谋杀契约精神</title>
-      <link>https://blog.hyun.cc/post/l8a8OG/</link>
-      <guid isPermaLink="true">https://blog.hyun.cc/post/l8a8OG/</guid>
+      <link>https://tsaihyun.github.io/post/l8a8OG/</link>
+      <guid isPermaLink="true">https://tsaihyun.github.io/post/l8a8OG/</guid>
       <pubDate>Sun, 03 May 2026 06:23:17 +0800</pubDate>
       <description><![CDATA[<p>今天早上的一顿外卖，让我对“逻辑孤岛”这个词有了生理性的认知。这种由于“坚持常识”而产生的孤独感，甚至比被围攻本身更让人无力。</p>
 <p>早起肚子饿，点了个一对一专送，本想安稳吃顿早饭。等了半天，等来的是骑手一个冷冰冰的电话，开口就是神逻辑：“我是众包，不能骑车进去，我不给送上门，只能放小区门口。”</p>
@@ -1093,8 +1153,8 @@ location ~* ^/api/v1/ws/(server|terminal|file)(.*)$ {
     </item>
     <item>
       <title>那个发光的 IP</title>
-      <link>https://blog.hyun.cc/post/uYC2P2/</link>
-      <guid isPermaLink="true">https://blog.hyun.cc/post/uYC2P2/</guid>
+      <link>https://tsaihyun.github.io/post/uYC2P2/</link>
+      <guid isPermaLink="true">https://tsaihyun.github.io/post/uYC2P2/</guid>
       <pubDate>Sun, 19 Apr 2026 17:49:08 +0800</pubDate>
       <description><![CDATA[<p>这事儿确实有点魔幻，值得记一笔。</p>
 <p>我那个写真小站最近一直报警宕机。因为服务器配置本来就低，我也懒得去查原因，直接挂了个脚本：检测到网站访问不了就自动重启。这段时间崩得实在太频繁，我只能上去翻日志。</p>
@@ -1111,8 +1171,8 @@ location ~* ^/api/v1/ws/(server|terminal|file)(.*)$ {
     </item>
     <item>
       <title>AI 放大能力，也放大愚蠢</title>
-      <link>https://blog.hyun.cc/post/mtxLxn/</link>
-      <guid isPermaLink="true">https://blog.hyun.cc/post/mtxLxn/</guid>
+      <link>https://tsaihyun.github.io/post/mtxLxn/</link>
+      <guid isPermaLink="true">https://tsaihyun.github.io/post/mtxLxn/</guid>
       <pubDate>Wed, 18 Feb 2026 07:00:22 +0800</pubDate>
       <description><![CDATA[<p>一个客户为了追求那点所谓的“服务器性能”，直接让 AI 帮他写优化脚本。最离谱的是，他对自己执行的每一行命令毫无概念，直接在生产环境 root 权限下梭哈。</p>
 <p><strong>结果不出所料：内核参数溢出，网络层当场暴毙，整台机器瞬间从公网消失。</strong></p>
@@ -1141,8 +1201,8 @@ location ~* ^/api/v1/ws/(server|terminal|file)(.*)$ {
     </item>
     <item>
       <title>永久白嫖Cloudfire Pro 或 Business</title>
-      <link>https://blog.hyun.cc/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/</link>
-      <guid isPermaLink="true">https://blog.hyun.cc/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/</guid>
+      <link>https://tsaihyun.github.io/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/</link>
+      <guid isPermaLink="true">https://tsaihyun.github.io/post/yong-jiu-bai-piao-cloudfire-pro-huo-business/</guid>
       <pubDate>Mon, 05 Jan 2026 03:58:34 +0800</pubDate>
       <description><![CDATA[<h1 id="cloudflare-">Cloudflare 计费逻辑缺陷：通过请求重放实现高级订阅绕过</h1>
 <p>在针对 Cloudflare 订阅体系进行逆向测试时，我发现其前端结算逻辑与后端状态同步之间存在一个有趣的“空隙”。通过特定的<strong>请求重放（Replay Attack）</strong>，可以在系统未产生实际账单的情况下，诱导后端激活 Pro 或 Business 计划。</p>
@@ -1232,8 +1292,8 @@ const delay = ms =&gt; new Promise(res =&gt; setTimeout(res, ms));
     </item>
     <item>
       <title>互联网深处的隐秘病房</title>
-      <link>https://blog.hyun.cc/post/tJdGoM/</link>
-      <guid isPermaLink="true">https://blog.hyun.cc/post/tJdGoM/</guid>
+      <link>https://tsaihyun.github.io/post/tJdGoM/</link>
+      <guid isPermaLink="true">https://tsaihyun.github.io/post/tJdGoM/</guid>
       <pubDate>Fri, 28 Nov 2025 07:52:56 +0800</pubDate>
       <description><![CDATA[<p>今天，因为一台被通报的服务器，我意外撞见了互联网的另一面。</p>
 <p>起初，上游通知我某台机器被“拉走”了，语气严肃得让我心里一紧，直觉告诉我可能出了大事。我瞬间切换到“排雷模式”，脑子里飞速复盘：挖矿？黑链？灰产？还是某种不可控的滥用？</p>
@@ -1263,24 +1323,6 @@ const delay = ms =&gt; new Promise(res =&gt; setTimeout(res, ms));
 ]]></description>
       <category>脑控</category>
       <category>阴谋论</category>
-    </item>
-    <item>
-      <title>为什么外来之声愈发悦耳，内部却为何屡遭质疑？</title>
-      <link>https://blog.hyun.cc/post/rvdhnx/</link>
-      <guid isPermaLink="true">https://blog.hyun.cc/post/rvdhnx/</guid>
-      <pubDate>Wed, 09 Jul 2025 11:18:50 +0800</pubDate>
-      <description><![CDATA[<p>最近总在想，为什么外面的声音越来越悦耳，内部却屡遭质疑？</p>
-<p>回想几年前，身边那些外国人还带着偏见和轻视，觉得我们落后、封闭。印象最深的是早些年几个印度同事，天天挂在嘴边说中国不如印度。</p>
-<p>但这几年，态度真的翻天覆地。</p>
-<p>无论是身边的外国朋友还是海外网友，语气里全是尊重和惊叹。他们夸中国人勤劳、坚韧，看比亚迪、看 AI 和机器人，觉得中国制造正在改变他们的生活。甚至连美国朋友都直言：“中国在超越美国，你们是一个伟大的民族。”</p>
-<p><strong>“美国第一，中国第二”，这在外面似乎已经是公认的事实了。</strong></p>
-<p>可是，国内的情况却复杂得让人压抑。</p>
-<p>这两年，社会上到处是不满不公引发的怨气。自杀现象频繁，司法和问题还是不断。打开社交媒体，都是阴阳怪气和“加速”的呼喊。如果不实名，谁都想整两句；可现实是，因为言论被处罚的案例也越来越多。</p>
-<p>这种反差太扎心了：</p>
-<p><strong>在外国人眼里，我们创造着一个又一个奇迹，彬彬有礼且充满创造力；而在我们自己眼里，却在为了生计和不公感到焦虑、愤恨。</strong></p>
-<p>这种“外热内冷”的割裂感，真的让我很困惑。为什么全世界都在夸我们站起来了，而我们自己人却活得这么累，怨气这么大？</p>
-<hr />
-]]></description>
     </item>
   </channel>
 </rss>

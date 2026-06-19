@@ -251,17 +251,17 @@
     
 <meta name="description" content="很多同学一旦遇到网络故障，由于不了解边界防火墙（如企业内网防火墙、骨干网长城GFW）的底层机制，往往会陷入盲目的猜疑中，不是疯狂重装系统，就是无休止地质问服务商。 其实，所谓的“墙”并不是一个简单的“开关”，它是一整套精密的、分层级的拦截技术。网络数据传输就像寄快递，要经过打包（应用层）、写地址（网络层）、运输（传输层）等多个步骤。防火墙的拦截，也是在这几个层级上分别展开的。 本篇文章就为你彻&amp;hellip;">
 <meta name="keywords" content="玄外之音,Hyun,Hyun's Sound,Web Development,IDC,Server,Cloudflare,Minimalism,Digital Garden,SiYuan Note,网络安全,逆向工程,技术随笔">
-<link rel="canonical" href="https://blog.hyun.cc/post/nAY9Im/">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"一文看懂常见防火墙阻断技术与 DNS 污染","url":"https://blog.hyun.cc/post/nAY9Im/","description":"很多同学一旦遇到网络故障，由于不了解边界防火墙（如企业内网防火墙、骨干网长城GFW）的底层机制，往往会陷入盲目的猜疑中，不是疯狂重装系统，就是无休止地质问服务商。 其实，所谓的“墙”并不是一个简单的“开关”，它是一整套精密的、分层级的拦截技术。网络数据传输就像寄快递，要经过打包（应用层）、写地址（网络层）、运输（传输层）等多个步骤。防火墙的拦截，也是在这几个层级上分别展开的。 本篇文章就为你彻\u0026hellip;","datePublished":"2026-05-16T07:45:19+08:00","dateModified":"2026-05-16T09:35:23+08:00","author":{"@type":"Person","name":"玄外之音"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/images/avatar.png"},"name":"玄外之音"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://blog.hyun.cc","name":"玄外之音","position":1},{"@type":"ListItem","item":"https://blog.hyun.cc/post/nAY9Im/","name":"一文看懂常见防火墙阻断技术与 DNS 污染","position":2}]}</script>
+<link rel="canonical" href="https://tsaihyun.github.io/post/nAY9Im/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"一文看懂常见防火墙阻断技术与 DNS 污染","url":"https://tsaihyun.github.io/post/nAY9Im/","description":"很多同学一旦遇到网络故障，由于不了解边界防火墙（如企业内网防火墙、骨干网长城GFW）的底层机制，往往会陷入盲目的猜疑中，不是疯狂重装系统，就是无休止地质问服务商。 其实，所谓的“墙”并不是一个简单的“开关”，它是一整套精密的、分层级的拦截技术。网络数据传输就像寄快递，要经过打包（应用层）、写地址（网络层）、运输（传输层）等多个步骤。防火墙的拦截，也是在这几个层级上分别展开的。 本篇文章就为你彻\u0026hellip;","datePublished":"2026-05-16T07:45:19+08:00","dateModified":"2026-05-16T09:35:23+08:00","author":{"@type":"Person","name":"玄外之音"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/images/avatar.png"},"name":"玄外之音"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://tsaihyun.github.io","name":"玄外之音","position":1},{"@type":"ListItem","item":"https://tsaihyun.github.io/post/nAY9Im/","name":"一文看懂常见防火墙阻断技术与 DNS 污染","position":2}]}</script>
 <meta property="og:title" content="一文看懂常见防火墙阻断技术与 DNS 污染">
 <meta property="og:description" content="很多同学一旦遇到网络故障，由于不了解边界防火墙（如企业内网防火墙、骨干网长城GFW）的底层机制，往往会陷入盲目的猜疑中，不是疯狂重装系统，就是无休止地质问服务商。 其实，所谓的“墙”并不是一个简单的“开关”，它是一整套精密的、分层级的拦截技术。网络数据传输就像寄快递，要经过打包（应用层）、写地址（网络层）、运输（传输层）等多个步骤。防火墙的拦截，也是在这几个层级上分别展开的。 本篇文章就为你彻&amp;hellip;">
-<meta property="og:url" content="https://blog.hyun.cc/post/nAY9Im/">
+<meta property="og:url" content="https://tsaihyun.github.io/post/nAY9Im/">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="玄外之音">
 <meta property="og:image" content="/images/avatar.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:url" content="https://blog.hyun.cc/post/nAY9Im/">
+<meta name="twitter:url" content="https://tsaihyun.github.io/post/nAY9Im/">
 <meta name="twitter:title" content="一文看懂常见防火墙阻断技术与 DNS 污染">
 <meta name="twitter:description" content="很多同学一旦遇到网络故障，由于不了解边界防火墙（如企业内网防火墙、骨干网长城GFW）的底层机制，往往会陷入盲目的猜疑中，不是疯狂重装系统，就是无休止地质问服务商。 其实，所谓的“墙”并不是一个简单的“开关”，它是一整套精密的、分层级的拦截技术。网络数据传输就像寄快递，要经过打包（应用层）、写地址（网络层）、运输（传输层）等多个步骤。防火墙的拦截，也是在这几个层级上分别展开的。 本篇文章就为你彻&amp;hellip;">
 <meta name="twitter:image" content="/images/avatar.png">
@@ -637,7 +637,7 @@
                     
     </nav>
 
-    <div class="Copyright">Copyright &copy; 2026 <a href="https://blog.hyun.cc">
+    <div class="Copyright">Copyright &copy; 2026 <a href="https://tsaihyun.github.io">
                 玄外之音
             </a></div>
 

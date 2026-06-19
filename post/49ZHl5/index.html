@@ -251,17 +251,17 @@
     
 <meta name="description" content="📌 写在前面 哪吒监控官方发布了一则重磅安全公告（GHSA-5c25-7vpj-9mqh），披露了一个无需任何认证即可读取任意文件的高危路径遍历漏洞。作为运维监控领域的常用工具，其影响面不容小觑。 本着&amp;quot;知己知彼&amp;quot;的安全理念，我决定对该漏洞进行完整的分析与验证。本文将完整记录从漏洞原理分析到实战验证的全过程，希望能为运维同仁提供防御参考。 一、漏洞全景概览 #&amp;hellip;">
 <meta name="keywords" content="玄外之音,Hyun,Hyun's Sound,Web Development,IDC,Server,Cloudflare,Minimalism,Digital Garden,SiYuan Note,网络安全,逆向工程,技术随笔">
-<link rel="canonical" href="https://blog.hyun.cc/post/49ZHl5/">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"哪吒监控Dashboard路径漏洞实战测试","url":"https://blog.hyun.cc/post/49ZHl5/","description":"📌 写在前面 哪吒监控官方发布了一则重磅安全公告（GHSA-5c25-7vpj-9mqh），披露了一个无需任何认证即可读取任意文件的高危路径遍历漏洞。作为运维监控领域的常用工具，其影响面不容小觑。 本着\u0026quot;知己知彼\u0026quot;的安全理念，我决定对该漏洞进行完整的分析与验证。本文将完整记录从漏洞原理分析到实战验证的全过程，希望能为运维同仁提供防御参考。 一、漏洞全景概览 #\u0026hellip;","datePublished":"2026-06-17T17:44:58+08:00","dateModified":"2026-06-17T18:41:17+08:00","author":{"@type":"Person","name":"玄外之音"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/images/avatar.png"},"name":"玄外之音"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://blog.hyun.cc","name":"玄外之音","position":1},{"@type":"ListItem","item":"https://blog.hyun.cc/post/49ZHl5/","name":"哪吒监控Dashboard路径漏洞实战测试","position":2}]}</script>
+<link rel="canonical" href="https://tsaihyun.github.io/post/49ZHl5/">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"哪吒监控Dashboard路径漏洞实战测试","url":"https://tsaihyun.github.io/post/49ZHl5/","description":"📌 写在前面 哪吒监控官方发布了一则重磅安全公告（GHSA-5c25-7vpj-9mqh），披露了一个无需任何认证即可读取任意文件的高危路径遍历漏洞。作为运维监控领域的常用工具，其影响面不容小觑。 本着\u0026quot;知己知彼\u0026quot;的安全理念，我决定对该漏洞进行完整的分析与验证。本文将完整记录从漏洞原理分析到实战验证的全过程，希望能为运维同仁提供防御参考。 一、漏洞全景概览 #\u0026hellip;","datePublished":"2026-06-17T17:44:58+08:00","dateModified":"2026-06-17T18:41:17+08:00","author":{"@type":"Person","name":"玄外之音"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"/images/avatar.png"},"name":"玄外之音"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","item":"https://tsaihyun.github.io","name":"玄外之音","position":1},{"@type":"ListItem","item":"https://tsaihyun.github.io/post/49ZHl5/","name":"哪吒监控Dashboard路径漏洞实战测试","position":2}]}</script>
 <meta property="og:title" content="哪吒监控Dashboard路径漏洞实战测试">
 <meta property="og:description" content="📌 写在前面 哪吒监控官方发布了一则重磅安全公告（GHSA-5c25-7vpj-9mqh），披露了一个无需任何认证即可读取任意文件的高危路径遍历漏洞。作为运维监控领域的常用工具，其影响面不容小觑。 本着&amp;quot;知己知彼&amp;quot;的安全理念，我决定对该漏洞进行完整的分析与验证。本文将完整记录从漏洞原理分析到实战验证的全过程，希望能为运维同仁提供防御参考。 一、漏洞全景概览 #&amp;hellip;">
-<meta property="og:url" content="https://blog.hyun.cc/post/49ZHl5/">
+<meta property="og:url" content="https://tsaihyun.github.io/post/49ZHl5/">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="玄外之音">
 <meta property="og:image" content="/images/avatar.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:url" content="https://blog.hyun.cc/post/49ZHl5/">
+<meta name="twitter:url" content="https://tsaihyun.github.io/post/49ZHl5/">
 <meta name="twitter:title" content="哪吒监控Dashboard路径漏洞实战测试">
 <meta name="twitter:description" content="📌 写在前面 哪吒监控官方发布了一则重磅安全公告（GHSA-5c25-7vpj-9mqh），披露了一个无需任何认证即可读取任意文件的高危路径遍历漏洞。作为运维监控领域的常用工具，其影响面不容小觑。 本着&amp;quot;知己知彼&amp;quot;的安全理念，我决定对该漏洞进行完整的分析与验证。本文将完整记录从漏洞原理分析到实战验证的全过程，希望能为运维同仁提供防御参考。 一、漏洞全景概览 #&amp;hellip;">
 <meta name="twitter:image" content="/images/avatar.png">
@@ -999,7 +999,7 @@ jwt_secret_key: rxLGg4gNLJEhRKA0oBOKBoGCaoqkdNW2R8OhLXu2XOZqKsWZy0iF5u4WXBl9zfee
 <br>
 
 <div style="margin-bottom: 10px;">
-    上一篇 : 已经是第一篇文章了~
+    上一篇 : <a href="/post/DyfhhM/">避坑野草云：200M 回国优质带宽， 实际回国不到 3M</a>
 </div>
 
 
@@ -1050,7 +1050,7 @@ jwt_secret_key: rxLGg4gNLJEhRKA0oBOKBoGCaoqkdNW2R8OhLXu2XOZqKsWZy0iF5u4WXBl9zfee
                     
     </nav>
 
-    <div class="Copyright">Copyright &copy; 2026 <a href="https://blog.hyun.cc">
+    <div class="Copyright">Copyright &copy; 2026 <a href="https://tsaihyun.github.io">
                 玄外之音
             </a></div>
 

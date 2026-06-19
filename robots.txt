@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://blog.hyun.cc/sitemap.xml
+Sitemap: https://tsaihyun.github.io/sitemap.xml
